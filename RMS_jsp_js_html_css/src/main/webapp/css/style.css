@@ -1,0 +1,429 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Segoe UI',Arial,sans-serif;
+}
+
+
+body{
+    background:#f5f7fa;
+}
+
+
+/* ================= SIDEBAR ================= */
+
+
+.sidebar{
+
+    position:fixed;
+    top:0;
+    left:0;
+
+    width:250px;
+    height:100vh;
+
+    background:#1f2937;
+
+    color:white;
+
+    overflow-y:auto;
+
+}
+
+
+.sidebar h2{
+
+    padding:20px;
+    text-align:center;
+
+    background:#111827;
+
+}
+
+
+.sidebar ul{
+
+    list-style:none;
+
+    padding:0;
+
+}
+
+
+.sidebar ul li{
+
+    padding:15px 20px;
+
+}
+
+
+.sidebar ul li:hover{
+
+    background:#374151;
+
+}
+
+
+.sidebar a{
+
+    color:white;
+    text-decoration:none;
+
+    display:block;
+
+}
+
+
+.sidebar i{
+
+    width:25px;
+
+}
+
+
+/* ================= NAVBAR ================= */
+
+
+.navbar{
+
+    height:70px;
+
+    background:white;
+
+    margin-left:250px;
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    padding:0 25px;
+
+    box-shadow:0 2px 5px rgba(0,0,0,.1);
+
+}
+
+
+
+/* ================= CONTENT ================= */
+
+
+.main-content{
+
+    margin-left:250px;
+
+    padding:20px;
+
+}
+
+
+
+.container-fluid{
+
+    padding:20px;
+
+}
+
+
+
+/* ================= CARD ================= */
+
+
+.card{
+
+    border:none;
+
+    border-radius:15px;
+
+    box-shadow:0 4px 12px rgba(0,0,0,.15);
+
+}
+
+
+
+.card-header{
+
+    border-radius:15px 15px 0 0!important;
+
+}
+
+
+
+/* ================= FORM ================= */
+
+
+.form-control,
+.form-select{
+
+    height:45px;
+
+}
+
+
+textarea{
+
+    height:100px!important;
+
+}
+
+
+
+/* ================= BUTTON ================= */
+
+
+.btn{
+
+    min-width:120px;
+
+    height:45px;
+
+    border-radius:6px;
+
+}
+
+
+
+
+/* ================= TABLE ================= */
+
+
+.table{
+
+    background:white;
+
+}
+
+
+.table th{
+
+    background:#0d6efd;
+
+    color:white;
+
+    text-align:center;
+
+}
+
+
+.table td{
+
+    text-align:center;
+
+    vertical-align:middle;
+
+}
+
+
+
+/* ================= DASHBOARD ================= */
+
+
+.dashboard-card{
+
+    color:white;
+
+}
+
+
+.dashboard-icon{
+
+    font-size:40px;
+
+    opacity:.8;
+
+}
+
+
+
+/* ================= PROFILE ================= */
+
+
+.profile-img{
+
+    width:120px;
+
+    height:120px;
+
+    border-radius:50%;
+
+    object-fit:cover;
+
+}
+
+
+
+/* ================= PRINT ================= */
+
+
+@media print{
+
+
+.sidebar,
+.navbar,
+button{
+
+    display:none!important;
+
+}
+
+
+.main-content{
+
+    margin:0;
+
+}
+
+
+}
+
+
+
+/* ================= TABLET ================= */
+
+
+@media(max-width:992px){
+
+
+.sidebar{
+
+    width:70px;
+
+}
+
+
+.sidebar h2{
+
+    font-size:18px;
+
+}
+
+
+.sidebar a{
+
+    font-size:0;
+
+}
+
+
+.sidebar i{
+
+    font-size:22px;
+
+}
+
+
+.main-content{
+
+    margin-left:70px;
+
+}
+
+
+.navbar{
+
+    margin-left:70px;
+
+}
+
+
+
+}
+
+
+
+
+/* ================= MOBILE ================= */
+
+
+@media(max-width:768px){
+
+
+.sidebar{
+
+    position:fixed;
+
+    width:0;
+
+    overflow:hidden;
+
+}
+
+
+.main-content{
+
+    margin-left:0;
+
+    padding:10px;
+
+}
+
+
+.navbar{
+
+    margin-left:0;
+
+    height:auto;
+
+    padding:15px;
+
+    flex-direction:column;
+
+    gap:10px;
+
+}
+
+
+
+.container-fluid{
+
+    padding:10px;
+
+}
+
+
+
+.card{
+
+    margin-bottom:20px;
+
+}
+
+
+
+h2{
+
+    font-size:22px;
+
+}
+
+
+
+.btn{
+
+    width:100%;
+
+    margin-bottom:10px;
+
+}
+
+
+
+.table-responsive{
+
+    overflow-x:auto;
+
+}
+
+
+.profile-img{
+
+    width:90px;
+
+    height:90px;
+
+}
+
+
+}

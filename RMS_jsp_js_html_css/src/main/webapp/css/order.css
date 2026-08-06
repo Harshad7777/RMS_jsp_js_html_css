@@ -1,0 +1,21 @@
+.card{
+border-radius:12px;
+box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+
+table th{
+background:#198754;
+color:white;
+text-align:center;
+}
+
+table td{
+text-align:center;
+vertical-align:middle;
+}
+
+#total{
+color:#dc3545;
+font-weight:bold;
+font-size:30px;
+}
