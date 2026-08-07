@@ -3,21 +3,16 @@ const CUSTOMER_API = "http://localhost:8080/api/customer";
 const MENU_API = "http://localhost:8080/api/menu";
 
 const token = localStorage.getItem("token");
+
 if (!token) {
     alert("Please Login First");
-    window.location.href = "login.jsp";
+    location.href = "login.jsp";
 }
 
-let items = [];
 let menuList = [];
+let items = [];
 
-document.addEventListener("DOMContentLoaded", function () {
-
-    if (!token) {
-        alert("Please Login");
-        window.location.href = "login.jsp";
-        return;
-    }
+document.addEventListener("DOMContentLoaded", () => {
 
     loadCustomers();
     loadMenu();
@@ -25,27 +20,25 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 
-// =============================
+//================================
 // Load Customers
-// =============================
+//================================
+
 function loadCustomers() {
 
     fetch(CUSTOMER_API, {
         headers: {
-            "Authorization": "Bearer " + token
+            Authorization: "Bearer " + token
         }
     })
-    .then(response => {
-        if (!response.ok) throw new Error("Customer Load Failed");
-        return response.json();
-    })
+    .then(res => res.json())
     .then(data => {
 
-        let option = "<option value=''>Select Customer</option>";
+        let html = "<option value=''>Select Customer</option>";
 
         data.forEach(c => {
 
-            option += `
+            html += `
             <option value="${c.customerId}">
                 ${c.customerName}
             </option>
@@ -53,111 +46,109 @@ function loadCustomers() {
 
         });
 
-        document.getElementById("customerId").innerHTML = option;
-
-    })
-    .catch(error => {
-
-        console.log(error);
-        alert("Unable to load customers");
+        document.getElementById("customerId").innerHTML = html;
 
     });
 
 }
 
-// =============================
+//================================
 // Load Menu
-// =============================
+//================================
+
 function loadMenu() {
 
     fetch(MENU_API, {
         headers: {
-            "Authorization": "Bearer " + token
+            Authorization: "Bearer " + token
         }
     })
-    .then(response => {
-        if (!response.ok) throw new Error("Menu Load Failed");
-        return response.json();
-    })
+    .then(res => res.json())
     .then(data => {
 
         menuList = data;
 
-        let option = "<option value=''>Select Menu</option>";
+        let html = "<option value=''>Select Menu</option>";
 
-        data.forEach(menu => {
+        data.forEach(m => {
 
-            option += `
-            <option value="${menu.itemId}">
-                ${menu.itemName} - ₹${menu.price}
+            html += `
+            <option value="${m.itemId}">
+                ${m.itemName} - ₹${m.price}
             </option>
             `;
 
         });
 
-        document.getElementById("menuId").innerHTML = option;
-
-    })
-    .catch(error => {
-
-        console.log(error);
-        alert("Unable to load menu");
+        document.getElementById("menuId").innerHTML = html;
 
     });
 
 }
 
-// =============================
+//================================
 // Add Item
-// =============================
+//================================
+
 function addItem() {
 
-    let menuId = document.getElementById("menuId").value;
-    let qty = parseInt(document.getElementById("quantity").value);
+    let menuId = Number(document.getElementById("menuId").value);
+    let qty = Number(document.getElementById("quantity").value);
 
-    if (menuId === "") {
-
+    if (!menuId) {
         alert("Select Menu Item");
         return;
-
     }
 
-    if (qty <= 0 || isNaN(qty)) {
-
+    if (qty <= 0) {
         alert("Invalid Quantity");
         return;
-
     }
 
     let menu = menuList.find(m => m.itemId == menuId);
 
-    let subtotal = Number(menu.price) * qty;
+    if (!menu) {
+        alert("Menu Item Not Found");
+        return;
+    }
 
-    items.push({
+    let existing = items.find(i => i.itemId == menu.itemId);
 
-        itemId: menu.itemId,
-        itemName: menu.itemName,
-        price: Number(menu.price),
-        quantity: qty,
-        subtotal: subtotal
+    if (existing) {
 
-    });
+        existing.quantity += qty;
+        existing.subtotal = existing.quantity * existing.price;
+
+    } else {
+
+        items.push({
+
+            itemId: menu.itemId,
+            itemName: menu.itemName,
+            price: Number(menu.price),
+            quantity: qty,
+            subtotal: Number(menu.price) * qty
+
+        });
+
+    }
 
     showCart();
 
 }
 
-// =============================
+//================================
 // Show Cart
-// =============================
+//================================
+
 function showCart() {
 
     let rows = "";
-    let total = 0;
+    let grandTotal = 0;
 
     items.forEach((item, index) => {
 
-        total += item.subtotal;
+        grandTotal += item.subtotal;
 
         rows += `
         <tr>
@@ -172,10 +163,11 @@ function showCart() {
 
             <td>
 
-                <button class="btn btn-danger btn-sm"
-                onclick="removeItem(${index})">
+                <button
+                    class="btn btn-danger btn-sm"
+                    onclick="removeItem(${index})">
 
-                Remove
+                    Remove
 
                 </button>
 
@@ -187,13 +179,14 @@ function showCart() {
     });
 
     document.getElementById("cartTable").innerHTML = rows;
-    document.getElementById("total").innerHTML = total;
+    document.getElementById("total").innerHTML = grandTotal;
 
 }
 
-// =============================
+//================================
 // Remove Item
-// =============================
+//================================
+
 function removeItem(index) {
 
     items.splice(index, 1);
@@ -202,38 +195,38 @@ function removeItem(index) {
 
 }
 
-// =============================
+//================================
 // Place Order
-// =============================
+//================================
+
 function placeOrder() {
 
-    let customerId = document.getElementById("customerId").value;
+    let customerId = Number(document.getElementById("customerId").value);
 
-    if (customerId === "") {
+    if (!customerId) {
 
         alert("Select Customer");
         return;
 
     }
 
-    if (items.length === 0) {
+    if (items.length == 0) {
 
-        alert("Cart is Empty");
+        alert("Cart Empty");
         return;
 
     }
 
     const order = {
 
-        customerId: Number(customerId),
+        customerId: customerId,
+
         staffId: Number(localStorage.getItem("userId")),
 
-        items: items.map(item => ({
+        items: items.map(i => ({
 
-            itemId: item.itemId,
-            quantity: item.quantity,
-            price: item.price,
-            subtotal: item.subtotal
+            itemId: i.itemId,
+            quantity: i.quantity
 
         }))
 
@@ -246,24 +239,26 @@ function placeOrder() {
         headers: {
 
             "Content-Type": "application/json",
-            "Authorization": "Bearer " + token
+            Authorization: "Bearer " + token
 
         },
 
         body: JSON.stringify(order)
 
     })
-    .then(response => {
 
-        if (!response.ok)
-            throw new Error("Order Failed");
+    .then(res => {
 
-        return response.text();
+        if (!res.ok)
+            throw new Error();
+
+        return res.json();
 
     })
-    .then(message => {
 
-        alert(message);
+    .then(res => {
+
+        alert(res.message);
 
         items = [];
 
@@ -276,68 +271,205 @@ function placeOrder() {
         loadOrders();
 
     })
-    .catch(error => {
 
-        console.log(error);
-        alert("Unable to Place Order");
+    .catch(() => {
+
+        alert("Unable To Place Order");
 
     });
 
 }
 
-// =============================
+//================================
 // Load Orders
-// =============================
+//================================
+
 function loadOrders() {
 
     fetch(ORDER_API, {
+
         headers: {
-            "Authorization": "Bearer " + token
-        }
-    })
-    .then(response => {
 
-        if (!response.ok) {
-            throw new Error("Order Load Failed");
+            Authorization: "Bearer " + token
+
         }
 
-        return response.json();
-
     })
+
+    .then(res => res.json())
+
     .then(data => {
 
         let rows = "";
 
-		data.forEach(order => {
+        data.forEach(o => {
 
-		    rows += `
-		    <tr>
+            let badge = "bg-warning";
 
-		        <td>${order.orderId}</td>
-		        <td>${order.customerId}</td>
-		        <td>${order.totalAmount}</td>
-				<td>
-				    <span class="badge bg-warning">
-				        ${order.orderStatus || 'N/A'}
-				    </span>
-				</td>
-		        <td>${order.orderDate}</td>
+            if (o.orderStatus == "COMPLETED")
+                badge = "bg-success";
 
-		    </tr>
-		    `;
+            if (o.orderStatus == "CANCELLED")
+                badge = "bg-danger";
 
-		});
+            rows += `
 
+            <tr>
+
+                <td>${o.orderId}</td>
+
+                <td>${o.customerName}</td>
+
+                <td>₹${o.totalAmount}</td>
+
+                <td>
+
+                    <span class="badge ${badge}">
+                        ${o.orderStatus}
+                    </span>
+
+                </td>
+
+                <td>${o.orderDate.replace("T"," ")}</td>
+
+                <td>
+
+                    <button
+                        class="btn btn-info btn-sm"
+                        onclick="viewOrder(${o.orderId})">
+
+                        View
+
+                    </button>
+
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="cancelOrder(${o.orderId})">
+
+                        Cancel
+
+                    </button>
+
+                </td>
+
+            </tr>
+
+            `;
+
+        });
 
         document.getElementById("orderTable").innerHTML = rows;
-
-
-    })
-    .catch(error => {
-
-        console.log(error);
-        alert("Unable to load orders");
 
     });
 
 }
+
+//================================
+// View Order
+//================================
+
+function viewOrder(orderId) {
+
+    fetch(ORDER_API + "/" + orderId, {
+
+        headers: {
+            Authorization: "Bearer " + token
+        }
+
+    })
+
+    .then(res => res.json())
+
+    .then(order => {
+
+        document.getElementById("mOrderId").innerHTML = order.orderId;
+        document.getElementById("mCustomer").innerHTML = order.customerName;
+        document.getElementById("mStatus").innerHTML = order.orderStatus;
+        document.getElementById("mTotal").innerHTML = "₹" + order.totalAmount;
+
+        fetch(ORDER_API + "/details/" + orderId, {
+
+            headers: {
+                Authorization: "Bearer " + token
+            }
+
+        })
+
+        .then(res => res.json())
+
+        .then(details => {
+
+            let rows = "";
+
+            details.forEach(d => {
+
+                rows += `
+
+                <tr>
+
+                    <td>${d.itemName}</td>
+
+                    <td>₹${d.price}</td>
+
+                    <td>${d.quantity}</td>
+
+                    <td>₹${d.subtotal}</td>
+
+                </tr>
+
+                `;
+
+            });
+
+            document.getElementById("detailTable").innerHTML = rows;
+
+            new bootstrap.Modal(
+                document.getElementById("orderModal")
+            ).show();
+
+        });
+
+    });
+
+}
+
+//================================
+// Cancel Order
+//================================
+
+function cancelOrder(id) {
+
+    if (!confirm("Cancel this Order?"))
+        return;
+
+    fetch(ORDER_API + "/cancel/" + id, {
+
+        method: "PUT",
+
+        headers: {
+            Authorization: "Bearer " + token
+        }
+
+    })
+
+    .then(res => res.text())
+
+    .then(msg => {
+
+        alert(msg);
+
+        loadOrders();
+
+    });
+
+}
+
+//================================
+// Auto Refresh
+//================================
+
+setInterval(() => {
+
+    loadOrders();
+
+}, 30000);

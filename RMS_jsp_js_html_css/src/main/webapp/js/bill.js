@@ -1,6 +1,6 @@
 const BILL_API="http://localhost:8080/api/bill";
 
-var token=localStorage.getItem("token");
+const billToken = localStorage.getItem("token");
 if (!token) {
     alert("Please Login First");
     window.location.href = "login.jsp";
@@ -22,7 +22,7 @@ fetch(BILL_API+"/"+id,{
 
 headers:{
 
-Authorization:"Bearer "+token
+Authorization:"Bearer "+billtoken
 
 }
 

@@ -2,83 +2,102 @@
     margin:0;
     padding:0;
     box-sizing:border-box;
-    font-family:'Segoe UI',Arial,sans-serif;
+    font-family:"Segoe UI",sans-serif;
 }
 
-
 body{
-    background:#f5f7fa;
+    background:#f4f6f9;
 }
 
 
 /* ================= SIDEBAR ================= */
 
 
+/* Sidebar */
+
 .sidebar{
-
     position:fixed;
-    top:0;
     left:0;
-
+    top:0;
     width:250px;
     height:100vh;
-
     background:#1f2937;
-
-    color:white;
-
+    color:#fff;
     overflow-y:auto;
-
 }
 
-
-.sidebar h2{
-
-    padding:20px;
-    text-align:center;
-
+.logo{
+    height:70px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
     background:#111827;
-
+    font-size:30px;
+    font-weight:bold;
 }
 
+.logo i{
+    margin-right:10px;
+}
 
 .sidebar ul{
-
     list-style:none;
-
     padding:0;
-
 }
 
-
-.sidebar ul li{
-
-    padding:15px 20px;
-
-}
-
-
-.sidebar ul li:hover{
-
-    background:#374151;
-
-}
-
-
-.sidebar a{
-
-    color:white;
-    text-decoration:none;
-
+.sidebar li a{
     display:block;
-
+    color:white;
+    padding:15px 20px;
+    text-decoration:none;
+    transition:.3s;
 }
 
+.sidebar li a:hover{
+    background:#374151;
+}
 
-.sidebar i{
+.sidebar ul li a.active{
+    background:#198754;
+    color:#fff;
+    border-left:5px solid #fff;
+}
 
-    width:25px;
+/* Navbar */
 
+.navbar{
+    position:fixed;
+    left:250px;
+    right:0;
+    top:0;
+    height:70px;
+    background:white;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:0 30px;
+    box-shadow:0 3px 10px rgba(0,0,0,.1);
+    z-index:1000;
+}
+
+.user{
+    font-size:20px;
+}
+
+/* Main */
+
+.main-content{
+    margin-left:250px;
+    margin-top:70px;
+    padding:30px;
+}
+
+/* Cards */
+
+.card{
+    border:none;
+    border-radius:15px;
+    box-shadow:0 5px 20px rgba(0,0,0,.1);
 }
 
 
@@ -111,11 +130,9 @@ body{
 
 
 .main-content{
-
     margin-left:250px;
-
+    margin-top:70px;
     padding:20px;
-
 }
 
 
@@ -322,9 +339,24 @@ button{
 
 
 .navbar{
+    position:fixed;
+    top:0;
+    left:250px;
+    right:0;
 
-    margin-left:70px;
+    height:70px;
 
+    background:#fff;
+
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    padding:0 25px;
+
+    z-index:1000;
+
+    box-shadow:0 2px 10px rgba(0,0,0,.1);
 }
 
 

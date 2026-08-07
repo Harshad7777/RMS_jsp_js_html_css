@@ -1,231 +1,625 @@
-const API="http://localhost:8080/api/category";
+// =====================================================
+// CATEGORY API
+// =====================================================
 
-var token=localStorage.getItem("token");
+const CATEGORY_API = "http://localhost:8080/api/category";
 
-if (!token) {
+const categoryToken = localStorage.getItem("token");
+
+// =====================================================
+// LOGIN CHECK
+// =====================================================
+
+if (!categoryToken) {
+
     alert("Please Login First");
+
     window.location.href = "login.jsp";
+
 }
 
+// =====================================================
+// PAGE LOAD
+// =====================================================
 
-document.addEventListener("DOMContentLoaded",loadCategories);
+document.addEventListener("DOMContentLoaded", () => {
 
-// Load Categories
-function loadCategories(){
+    loadCategories();
 
-fetch(API,{
-
-headers:{
-Authorization:"Bearer "+token
-}
-
-})
-
-.then(res=>res.json())
-
-.then(data=>{
-
-let rows="";
-
-data.forEach(c=>{
-
-rows+=`
-
-<tr>
-
-<td>${c.categoryId}</td>
-
-<td>${c.categoryName}</td>
-
-<td>${c.description}</td>
-
-<td>${c.status}</td>
-
-<td>
-
-<button
-class="btn btn-warning btn-sm"
-onclick="editCategory(
-${c.categoryId},
-'${c.categoryName}',
-'${c.description}',
-'${c.status}'
-)">
-
-Edit
-
-</button>
-
-<button
-class="btn btn-danger btn-sm"
-onclick="deleteCategory(${c.categoryId})">
-
-Delete
-
-</button>
-
-</td>
-
-</tr>
-
-`;
+    document
+        .getElementById("searchCategory")
+        .addEventListener("keyup", searchCategory);
 
 });
 
-document.getElementById("categoryTable").innerHTML=rows;
+// =====================================================
+// LOAD ALL CATEGORIES
+// =====================================================
 
-});
+function loadCategories() {
 
-}
+    fetch(CATEGORY_API, {
 
-// Save
+        method: "GET",
 
-function saveCategory(){
+        headers: {
 
-const category={
+            "Authorization": "Bearer " + categoryToken,
 
-categoryName:document.getElementById("categoryName").value,
+            "Content-Type": "application/json"
 
-description:document.getElementById("description").value,
+        }
 
-status:document.getElementById("status").value
+    })
 
-};
+    .then(handleResponse)
 
-fetch(API,{
+    .then(showCategories)
 
-method:"POST",
-
-headers:{
-
-"Content-Type":"application/json",
-
-Authorization:"Bearer "+token
-
-},
-
-body:JSON.stringify(category)
-
-})
-
-.then(res=>res.text())
-
-.then(msg=>{
-
-alert(msg);
-
-clearForm();
-
-loadCategories();
-
-});
+    .catch(handleError);
 
 }
 
-// Edit
+// =====================================================
+// SHOW CATEGORIES
+// =====================================================
 
-function editCategory(id,name,description,status){
+function showCategories(categories) {
 
-document.getElementById("categoryId").value=id;
+    const table = document.getElementById("categoryTable");
 
-document.getElementById("categoryName").value=name;
+    table.innerHTML = "";
 
-document.getElementById("description").value=description;
+    if (!categories || categories.length === 0) {
 
-document.getElementById("status").value=status;
+        table.innerHTML = `
+            <tr>
+                <td colspan="5" class="text-center">
+                    No Categories Found
+                </td>
+            </tr>
+        `;
 
-}
+        return;
 
-// Update
+    }
 
-function updateCategory(){
+    let rows = "";
 
-const id=document.getElementById("categoryId").value;
+    categories.forEach(category => {
 
-const category={
+        const badge =
+            category.status === "ACTIVE"
+            ? "bg-success"
+            : "bg-secondary";
 
-categoryId:id,
+        rows += `
 
-categoryName:document.getElementById("categoryName").value,
+            <tr>
 
-description:document.getElementById("description").value,
+                <td>${category.categoryId}</td>
 
-status:document.getElementById("status").value
+                <td>${escapeHtml(category.categoryName)}</td>
 
-};
+                <td>${escapeHtml(category.description || "")}</td>
 
-fetch(API+"/"+id,{
+                <td>
 
-method:"PUT",
+                    <span class="badge ${badge}">
 
-headers:{
+                        ${escapeHtml(category.status)}
 
-"Content-Type":"application/json",
+                    </span>
 
-Authorization:"Bearer "+token
+                </td>
 
-},
+                <td>
 
-body:JSON.stringify(category)
+                    <button
+                        class="btn btn-primary btn-sm"
+                        onclick="editCategory(
+                            ${category.categoryId},
+                            '${escapeJs(category.categoryName)}',
+                            '${escapeJs(category.description || "")}',
+                            '${escapeJs(category.status)}'
+                        )">
 
-})
+                        <i class="fa fa-edit"></i>
 
-.then(res=>res.text())
+                        Edit
 
-.then(msg=>{
+                    </button>
 
-alert(msg);
+                    <button
+                        class="btn btn-danger btn-sm"
+                        onclick="deleteCategory(${category.categoryId})">
 
-clearForm();
+                        <i class="fa fa-trash"></i>
 
-loadCategories();
+                        Delete
 
-});
+                    </button>
 
-}
+                </td>
 
-// Delete
+            </tr>
 
-function deleteCategory(id){
+        `;
 
-if(confirm("Delete Category?")){
+    });
 
-fetch(API+"/"+id,{
-
-method:"DELETE",
-
-headers:{
-
-Authorization:"Bearer "+token
-
-}
-
-})
-
-.then(res=>res.text())
-
-.then(msg=>{
-
-alert(msg);
-
-loadCategories();
-
-});
-
-}
+    table.innerHTML = rows;
 
 }
 
-// Clear
+// =====================================================
+// SEARCH CATEGORY
+// =====================================================
 
-function clearForm(){
+function searchCategory() {
 
-document.getElementById("categoryId").value="";
+    const keyword = this.value.trim();
 
-document.getElementById("categoryName").value="";
+    if (keyword === "") {
 
-document.getElementById("description").value="";
+        loadCategories();
 
-document.getElementById("status").value="ACTIVE";
+        return;
+
+    }
+
+    fetch(
+
+        CATEGORY_API +
+        "/search/" +
+        encodeURIComponent(keyword),
+
+        {
+
+            headers: {
+
+                "Authorization":
+                    "Bearer " + categoryToken
+
+            }
+
+        }
+
+    )
+
+    .then(handleResponse)
+
+    .then(showCategories)
+
+    .catch(handleError);
 
 }
+
+// =====================================================
+// HANDLE FETCH RESPONSE
+// =====================================================
+
+function handleResponse(response) {
+
+    if (!response.ok) {
+
+        return response.text()
+
+        .then(message => {
+
+            throw new Error(message);
+
+        });
+
+    }
+
+    return response.json();
+
+}
+
+// =====================================================
+// HANDLE ERROR
+// =====================================================
+
+function handleError(error) {
+
+    console.error(error);
+
+    alert(error.message || "Something went wrong.");
+
+}
+
+// =====================================================
+// ESCAPE HTML
+// =====================================================
+
+function escapeHtml(value) {
+
+    if (value == null) {
+
+        return "";
+
+    }
+
+    return String(value)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
+
+}
+
+// =====================================================
+// ESCAPE JS STRING
+// =====================================================
+
+function escapeJs(value) {
+
+    if (value == null) {
+
+        return "";
+
+    }
+
+    return String(value)
+
+        .replace(/\\/g, "\\\\")
+
+        .replace(/'/g, "\\'")
+
+        .replace(/\r/g, "\\r")
+
+        .replace(/\n/g, "\\n");
+
+} 		// =====================================================
+		// SAVE CATEGORY
+		// =====================================================
+
+		function saveCategory() {
+
+		    const categoryName =
+		        document.getElementById("categoryName").value.trim();
+
+		    const description =
+		        document.getElementById("description").value.trim();
+
+		    const status =
+		        document.getElementById("status").value;
+
+		    if (categoryName === "") {
+
+		        alert("Please Enter Category Name");
+
+		        document.getElementById("categoryName").focus();
+
+		        return;
+		    }
+
+		    const category = {
+
+		        categoryName: categoryName,
+
+		        description: description,
+
+		        status: status
+
+		    };
+
+		    fetch(CATEGORY_API, {
+
+		        method: "POST",
+
+		        headers: {
+
+		            "Content-Type": "application/json",
+
+		            "Authorization": "Bearer " + categoryToken
+
+		        },
+
+		        body: JSON.stringify(category)
+
+		    })
+
+		    .then(response => {
+
+		        if (!response.ok) {
+
+		            return response.text()
+
+		            .then(message => {
+
+		                throw new Error(message);
+
+		            });
+
+		        }
+
+		        return response.text();
+
+		    })
+
+		    .then(message => {
+
+		        alert(message);
+
+		        clearForm();
+
+		        loadCategories();
+
+		    })
+
+		    .catch(error => {
+
+		        alert(error.message);
+
+		    });
+
+		}
+
+		// =====================================================
+		// EDIT CATEGORY
+		// =====================================================
+
+		function editCategory(
+		    id,
+		    name,
+		    description,
+		    status
+		) {
+
+		    document.getElementById("categoryId").value = id;
+
+		    document.getElementById("categoryName").value = name;
+
+		    document.getElementById("description").value = description;
+
+		    document.getElementById("status").value = status;
+
+		    document
+		        .getElementById("saveBtn")
+		        .classList.add("d-none");
+
+		    document
+		        .getElementById("updateBtn")
+		        .classList.remove("d-none");
+
+		    window.scrollTo({
+
+		        top: 0,
+
+		        behavior: "smooth"
+
+		    });
+
+		}
+
+		// =====================================================
+		// UPDATE CATEGORY
+		// =====================================================
+
+		function updateCategory() {
+
+		    const id =
+		        document.getElementById("categoryId").value;
+
+		    if (id === "") {
+
+		        alert("Please select a category.");
+
+		        return;
+
+		    }
+
+		    const categoryName =
+		        document.getElementById("categoryName").value.trim();
+
+		    const description =
+		        document.getElementById("description").value.trim();
+
+		    const status =
+		        document.getElementById("status").value;
+
+		    if (categoryName === "") {
+
+		        alert("Please Enter Category Name");
+
+		        document.getElementById("categoryName").focus();
+
+		        return;
+
+		    }
+
+		    const category = {
+
+		        categoryId: Number(id),
+
+		        categoryName: categoryName,
+
+		        description: description,
+
+		        status: status
+
+		    };
+
+		    fetch(CATEGORY_API + "/" + id, {
+
+		        method: "PUT",
+
+		        headers: {
+
+		            "Content-Type": "application/json",
+
+		            "Authorization": "Bearer " + categoryToken
+
+		        },
+
+		        body: JSON.stringify(category)
+
+		    })
+
+		    .then(response => {
+
+		        if (!response.ok) {
+
+		            return response.text()
+
+		            .then(message => {
+
+		                throw new Error(message);
+
+		            });
+
+		        }
+
+		        return response.text();
+
+		    })
+
+		    .then(message => {
+
+		        alert(message);
+
+		        clearForm();
+
+		        loadCategories();
+
+		    })
+
+		    .catch(error => {
+
+		        alert(error.message);
+
+		    });
+
+		}
+		// =====================================================
+		// DELETE CATEGORY
+		// =====================================================
+
+		function deleteCategory(id) {
+
+		    if (!confirm("Are you sure you want to delete this category?")) {
+		        return;
+		    }
+
+		    fetch(CATEGORY_API + "/" + id, {
+
+		        method: "DELETE",
+
+		        headers: {
+
+		            "Authorization": "Bearer " + categoryToken
+
+		        }
+
+		    })
+
+		    .then(response => {
+
+		        if (!response.ok) {
+
+		            return response.text()
+
+		            .then(message => {
+
+		                throw new Error(message);
+
+		            });
+
+		        }
+
+		        return response.text();
+
+		    })
+
+		    .then(message => {
+
+		        alert(message);
+
+		        clearForm();
+
+		        loadCategories();
+
+		    })
+
+		    .catch(error => {
+
+		        alert(error.message);
+
+		    });
+
+		}
+
+		// =====================================================
+		// CLEAR FORM
+		// =====================================================
+
+		function clearForm() {
+
+		    document.getElementById("categoryId").value = "";
+
+		    document.getElementById("categoryName").value = "";
+
+		    document.getElementById("description").value = "";
+
+		    document.getElementById("status").value = "ACTIVE";
+
+		    document
+		        .getElementById("saveBtn")
+		        .classList.remove("d-none");
+
+		    document
+		        .getElementById("updateBtn")
+		        .classList.add("d-none");
+
+		    document.getElementById("categoryName").focus();
+
+		}
+
+		// =====================================================
+		// OPTIONAL: PRESS ENTER TO SAVE
+		// =====================================================
+
+		document.addEventListener("keypress", function (event) {
+
+		    if (event.key === "Enter") {
+
+		        const updateVisible =
+		            !document
+		                .getElementById("updateBtn")
+		                .classList.contains("d-none");
+
+		        if (updateVisible) {
+
+		            updateCategory();
+
+		        } else {
+
+		            saveCategory();
+
+		        }
+
+		    }
+
+		});
+
+		// =====================================================
+		// OPTIONAL: ESC KEY CLEARS FORM
+		// =====================================================
+
+		document.addEventListener("keydown", function (event) {
+
+		    if (event.key === "Escape") {
+
+		        clearForm();
+
+		    }
+
+		});

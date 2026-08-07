@@ -1,89 +1,412 @@
+// ============================================================
+// MENU API
+// ============================================================
+
 const MENU_API = "http://localhost:8080/api/menu";
+
 const CATEGORY_API = "http://localhost:8080/api/category";
+
 const IMAGE_PATH = "http://localhost:8080/uploads/";
+
 const DEFAULT_IMAGE = "images/menu/default-food.jpg";
 
 
-document.addEventListener("DOMContentLoaded", () => {
+// ============================================================
+// TOKEN
+// ============================================================
+
+// IMPORTANT:
+// If auth.js already creates a global token,
+// DO NOT write const token again here.
+//
+// We only read it.
+
+const authToken = localStorage.getItem("token");
+
+
+if (!authToken) {
+
+    alert("Please Login First");
+
+    window.location.href = "login.jsp";
+
+}
+
+
+// ============================================================
+// PAGE LOAD
+// ============================================================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    console.log("Menu page loaded");
+
     loadCategories();
+
     loadMenu();
 
-    const imageInput = document.getElementById("menuImage");
+
+    // ========================================================
+    // IMAGE PREVIEW
+    // ========================================================
+
+    const imageInput =
+        document.getElementById("menuImage");
+
 
     if (imageInput) {
-        imageInput.addEventListener("change", function () {
-            if (this.files.length > 0) {
-                document.getElementById("previewImage").src =
-                    URL.createObjectURL(this.files[0]);
+
+        imageInput.addEventListener(
+            "change",
+            function () {
+
+                if (this.files &&
+                    this.files.length > 0) {
+
+                    const file = this.files[0];
+
+                    const imageURL =
+                        URL.createObjectURL(file);
+
+                    document.getElementById(
+                        "previewImage"
+                    ).src = imageURL;
+
+                }
+
             }
-        });
+        );
+
     }
+
 });
-//filtermenu
-function filterMenu() {
 
-    let categoryId =
-        document.getElementById("filterCategory").value;
 
-    if (categoryId === "") {
+// ============================================================
+// LOAD CATEGORIES
+// ============================================================
 
-        loadMenu();
-        return;
+function loadCategories() {
 
-    }
+    console.log("Loading categories...");
 
-    fetch(MENU_API + "/category/" + categoryId, {
+
+    fetch(CATEGORY_API, {
+
+        method: "GET",
 
         headers: {
 
-            "Authorization": "Bearer " + token
+            "Authorization":
+                "Bearer " + authToken
 
         }
 
     })
 
-    .then(res => {
+    .then(function (response) {
 
-        if (!res.ok)
-            throw new Error("Filter Failed");
+        console.log(
+            "Category Status:",
+            response.status
+        );
 
-        return res.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Category Load Failed"
+            );
+
+        }
+
+
+        return response.json();
 
     })
 
-    .then(data => {
+    .then(function (data) {
 
-        displayMenu(data);
+        console.log(
+            "Category Data:",
+            data
+        );
+
+
+        const categorySelect =
+            document.getElementById(
+                "categoryId"
+            );
+
+
+        const filterSelect =
+            document.getElementById(
+                "filterCategory"
+            );
+
+
+        let categoryHTML =
+            `<option value="">
+                Select Category
+             </option>`;
+
+
+        let filterHTML =
+            `<option value="">
+                All Categories
+             </option>`;
+
+
+        data.forEach(function (category) {
+
+            categoryHTML += `
+                <option value="${category.categoryId}">
+                    ${category.categoryName}
+                </option>
+            `;
+
+
+            filterHTML += `
+                <option value="${category.categoryId}">
+                    ${category.categoryName}
+                </option>
+            `;
+
+        });
+
+
+        categorySelect.innerHTML =
+            categoryHTML;
+
+
+        filterSelect.innerHTML =
+            filterHTML;
 
     })
 
-    .catch(err => {
+    .catch(function (error) {
 
-        console.log(err);
+        console.error(
+            "Category Error:",
+            error
+        );
+
+
+        alert(
+            "Unable to load categories"
+        );
 
     });
 
 }
 
-//Search Function
 
+// ============================================================
+// LOAD ALL MENU
+// ============================================================
+
+function loadMenu() {
+
+    console.log("Loading menu...");
+
+
+    fetch(MENU_API, {
+
+        method: "GET",
+
+        headers: {
+
+            "Authorization":
+                "Bearer " + authToken
+
+        }
+
+    })
+
+    .then(function (response) {
+
+        console.log(
+            "Menu Status:",
+            response.status
+        );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Menu Load Failed"
+            );
+
+        }
+
+
+        return response.json();
+
+    })
+
+    .then(function (data) {
+
+        console.log(
+            "Menu Data:",
+            data
+        );
+
+
+        displayMenu(data);
+
+    })
+
+    .catch(function (error) {
+
+        console.error(
+            "Menu Error:",
+            error
+        );
+
+
+        alert(
+            "Unable to load menu"
+        );
+
+    });
+
+}
+
+
+// ============================================================
+// FILTER MENU BY CATEGORY
+// ============================================================
+
+function filterMenu() {
+
+    const categoryId =
+        document.getElementById(
+            "filterCategory"
+        ).value;
+
+
+    // If All Categories selected
+
+    if (categoryId === "") {
+
+        loadMenu();
+
+        return;
+
+    }
+
+
+    console.log(
+        "Filtering category:",
+        categoryId
+    );
+
+
+    fetch(
+        MENU_API +
+        "/category/" +
+        categoryId,
+        {
+
+            method: "GET",
+
+            headers: {
+
+                "Authorization":
+                    "Bearer " + authToken
+
+            }
+
+        }
+    )
+
+    .then(function (response) {
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Filter Failed"
+            );
+
+        }
+
+
+        return response.json();
+
+    })
+
+    .then(function (data) {
+
+        console.log(
+            "Filtered Menu:",
+            data
+        );
+
+
+        displayMenu(data);
+
+    })
+
+    .catch(function (error) {
+
+        console.error(
+            "Filter Error:",
+            error
+        );
+
+
+        alert(
+            "Unable to filter menu"
+        );
+
+    });
+
+}
+
+
+// ============================================================
+// SEARCH MENU
+// ============================================================
 
 function searchMenu() {
 
+    const searchInput =
+        document.getElementById(
+            "searchMenu"
+        );
+
+
     const text =
-        document.getElementById("searchMenu")
-        .value
-        .toLowerCase();
+        searchInput.value
+            .toLowerCase()
+            .trim();
+
 
     const cards =
-        document.querySelectorAll("#menuCardContainer .col-md-4");
+        document.querySelectorAll(
+            "#menuCardContainer .menu-card-column"
+        );
 
-    cards.forEach(card => {
+
+    cards.forEach(function (card) {
+
+        const titleElement =
+            card.querySelector(
+                ".card-title"
+            );
+
+
+        if (!titleElement) {
+
+            return;
+
+        }
+
 
         const title =
-            card.querySelector(".card-title")
-            .innerText
-            .toLowerCase();
+            titleElement.innerText
+                .toLowerCase();
+
 
         if (title.includes(text)) {
 
@@ -98,645 +421,1122 @@ function searchMenu() {
     });
 
 }
-// =================================================
-// LOAD CATEGORY
-// =================================================
 
-function loadCategories() {
 
-    fetch(CATEGORY_API, {
-        headers: {
-            "Authorization": "Bearer " + token
+// ============================================================
+// DISPLAY MENU
+// ============================================================
+
+function displayMenu(menuList) {
+
+    console.log(
+        "displayMenu() called"
+    );
+
+
+    console.log(
+        "Menu List:",
+        menuList
+    );
+
+
+    const container =
+        document.getElementById(
+            "menuCardContainer"
+        );
+
+
+    if (!container) {
+
+        console.error(
+            "menuCardContainer not found"
+        );
+
+        return;
+
+    }
+
+
+    let cards = "";
+
+
+    if (!menuList ||
+        menuList.length === 0) {
+
+        container.innerHTML = `
+
+            <div class="col-12">
+
+                <div class="alert alert-info">
+
+                    No menu items found.
+
+                </div>
+
+            </div>
+
+        `;
+
+        return;
+
+    }
+
+
+    menuList.forEach(function (m) {
+
+
+        // ====================================================
+        // IMAGE
+        // ====================================================
+
+        let imageURL =
+            DEFAULT_IMAGE;
+
+
+        if (
+            m.image &&
+            typeof m.image === "string" &&
+            m.image.trim() !== "" &&
+            m.image !== "null" &&
+            m.image !== "string"
+        ) {
+
+            imageURL =
+                IMAGE_PATH +
+                m.image;
+
         }
+
+
+        // ====================================================
+        // CATEGORY NAME
+        // ====================================================
+
+        let categoryName = "";
+
+
+        if (
+            m.category &&
+            m.category.categoryName
+        ) {
+
+            categoryName =
+                m.category.categoryName;
+
+        }
+        else if (
+            m.categoryName
+        ) {
+
+            categoryName =
+                m.categoryName;
+
+        }
+
+
+        // ====================================================
+        // CARD
+        // ====================================================
+
+        cards += `
+
+        <div
+            class="col-md-4 mb-4 menu-card-column">
+
+            <div
+                class="card menu-card shadow h-100">
+
+
+                <!-- IMAGE -->
+
+                <img
+                    src="${imageURL}"
+                    class="card-img-top menu-image"
+                    alt="${escapeHTML(
+                        m.itemName || ""
+                    )}"
+                    style="
+                        height:220px;
+                        object-fit:cover;
+                        border-radius:
+                        10px 10px 0 0;
+                    "
+                    onerror="
+                        this.onerror=null;
+                        this.src='${DEFAULT_IMAGE}';
+                    ">
+
+
+                <!-- CARD BODY -->
+
+                <div class="card-body">
+
+
+                    <!-- ITEM NAME -->
+
+                    <h5 class="card-title">
+
+                        ${escapeHTML(
+                            m.itemName || ""
+                        )}
+
+                    </h5>
+
+
+                    <!-- CATEGORY -->
+
+                    <p>
+
+                        <b>Category:</b>
+
+                        ${escapeHTML(
+                            categoryName
+                        )}
+
+                    </p>
+
+
+                    <!-- DESCRIPTION -->
+
+                    <p>
+
+                        <b>Description:</b>
+
+                        ${escapeHTML(
+                            m.description || ""
+                        )}
+
+                    </p>
+
+
+                    <!-- PRICE -->
+
+                    <h4 class="text-success">
+
+                        ₹ ${Number(
+                            m.price || 0
+                        ).toFixed(2)}
+
+                    </h4>
+
+
+                    <!-- STATUS -->
+
+                    <span
+                        class="badge ${
+                            m.status === "AVAILABLE"
+                            ? "bg-success"
+                            : "bg-danger"
+                        }">
+
+                        ${escapeHTML(
+                            m.status || ""
+                        )}
+
+                    </span>
+
+
+                    <!-- BUTTONS -->
+
+                    <div
+                        class="d-flex
+                               justify-content-between
+                               mt-3">
+
+
+                        <!-- EDIT -->
+
+                        <button
+                            type="button"
+                            class="btn btn-warning"
+                            onclick="editMenuById(
+                                ${m.itemId}
+                            )">
+
+                            <i
+                                class="fa fa-edit">
+                            </i>
+
+                            Edit
+
+                        </button>
+
+
+                        <!-- DELETE -->
+
+                        <button
+                            type="button"
+                            class="btn btn-danger"
+                            onclick="deleteMenu(
+                                ${m.itemId}
+                            )">
+
+                            <i
+                                class="fa fa-trash">
+                            </i>
+
+                            Delete
+
+                        </button>
+
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        `;
+
+    });
+
+
+    container.innerHTML = cards;
+
+
+    console.log(
+        "Menu cards displayed"
+    );
+
+}
+
+
+// ============================================================
+// EDIT MENU BY ID
+// ============================================================
+//
+// Instead of passing JSON directly through onclick,
+// we find the menu object from the loaded data.
+//
+// This avoids problems with quotes in item names/descriptions.
+//
+
+let currentMenuList = [];
+
+
+// We modify displayMenu to remember the list.
+
+const originalDisplayMenu = displayMenu;
+
+
+// ============================================================
+// SAVE MENU
+// ============================================================
+
+function saveMenu() {
+
+    const itemName =
+        document.getElementById(
+            "itemName"
+        ).value.trim();
+
+
+    const categoryId =
+        document.getElementById(
+            "categoryId"
+        ).value;
+
+
+    const description =
+        document.getElementById(
+            "description"
+        ).value.trim();
+
+
+    const price =
+        document.getElementById(
+            "price"
+        ).value;
+
+
+    const status =
+        document.getElementById(
+            "status"
+        ).value;
+
+
+    // ========================================================
+    // VALIDATION
+    // ========================================================
+
+    if (itemName === "") {
+
+        alert(
+            "Please enter item name"
+        );
+
+        return;
+
+    }
+
+
+    if (categoryId === "") {
+
+        alert(
+            "Please select category"
+        );
+
+        return;
+
+    }
+
+
+    if (price === "" ||
+        Number(price) <= 0) {
+
+        alert(
+            "Please enter valid price"
+        );
+
+        return;
+
+    }
+
+
+    const formData =
+        new FormData();
+
+
+    formData.append(
+        "itemName",
+        itemName
+    );
+
+
+    formData.append(
+        "categoryId",
+        categoryId
+    );
+
+
+    formData.append(
+        "description",
+        description
+    );
+
+
+    formData.append(
+        "price",
+        price
+    );
+
+
+    formData.append(
+        "status",
+        status
+    );
+
+
+    const image =
+        document.getElementById(
+            "menuImage"
+        ).files[0];
+
+
+    if (image) {
+
+        formData.append(
+            "image",
+            image
+        );
+
+    }
+
+
+    console.log(
+        "Saving menu..."
+    );
+
+
+    fetch(MENU_API, {
+
+        method: "POST",
+
+        headers: {
+
+            "Authorization":
+                "Bearer " + authToken
+
+        },
+
+        body: formData
+
     })
 
-    .then(res => {
+    .then(async function (response) {
 
-        if (!res.ok)
-            throw new Error("Category Load Failed");
+        const message =
+            await response.text();
 
-        return res.json();
+
+        if (!response.ok) {
+
+            throw new Error(
+                message ||
+                "Save Menu Failed"
+            );
+
+        }
+
+
+        return message;
 
     })
 
-    .then(data => {
+    .then(function (message) {
 
-        let option = `<option value="">Select Category</option>`;
-        let filterOption = `<option value="">All Categories</option>`;
+        alert(message);
 
-        data.forEach(c => {
 
-            option += `
-                <option value="${c.categoryId}">
-                    ${c.categoryName}
-                </option>
-            `;
+        clearForm();
 
-            filterOption += `
-                <option value="${c.categoryId}">
-                    ${c.categoryName}
-                </option>
-            `;
+
+        loadMenu();
+
+    })
+
+    .catch(function (error) {
+
+        console.error(
+            "Save Error:",
+            error
+        );
+
+
+        alert(
+            "Unable to save menu.\n" +
+            error.message
+        );
+
+    });
+
+}
+
+
+// ============================================================
+// EDIT MENU
+// ============================================================
+
+function editMenu(m) {
+
+    console.log(
+        "Editing Menu:",
+        m
+    );
+
+
+    // ========================================================
+    // ID
+    // ========================================================
+
+    document.getElementById(
+        "itemId"
+    ).value =
+        m.itemId || "";
+
+
+    // ========================================================
+    // ITEM NAME
+    // ========================================================
+
+    document.getElementById(
+        "itemName"
+    ).value =
+        m.itemName || "";
+
+
+    // ========================================================
+    // CATEGORY
+    // ========================================================
+
+    let categoryId =
+        m.categoryId;
+
+
+    // If API returns category object
+
+    if (
+        !categoryId &&
+        m.category
+    ) {
+
+        categoryId =
+            m.category.categoryId;
+
+    }
+
+
+    document.getElementById(
+        "categoryId"
+    ).value =
+        categoryId || "";
+
+
+    // ========================================================
+    // DESCRIPTION
+    // ========================================================
+
+    document.getElementById(
+        "description"
+    ).value =
+        m.description || "";
+
+
+    // ========================================================
+    // PRICE
+    // ========================================================
+
+    document.getElementById(
+        "price"
+    ).value =
+        m.price || "";
+
+
+    // ========================================================
+    // STATUS
+    // ========================================================
+
+    document.getElementById(
+        "status"
+    ).value =
+        m.status || "AVAILABLE";
+
+
+    // ========================================================
+    // CLEAR FILE INPUT
+    // ========================================================
+
+    document.getElementById(
+        "menuImage"
+    ).value = "";
+
+
+    // ========================================================
+    // EXISTING IMAGE
+    // ========================================================
+
+    let imageURL =
+        DEFAULT_IMAGE;
+
+
+    if (
+        m.image &&
+        typeof m.image === "string" &&
+        m.image.trim() !== "" &&
+        m.image !== "null" &&
+        m.image !== "string"
+    ) {
+
+        imageURL =
+            IMAGE_PATH +
+            m.image;
+
+    }
+
+
+    document.getElementById(
+        "previewImage"
+    ).src =
+        imageURL;
+
+
+    // ========================================================
+    // SCROLL TO FORM
+    // ========================================================
+
+    const form =
+        document.getElementById(
+            "menuForm"
+        );
+
+
+    if (form) {
+
+        form.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "start"
 
         });
 
-        document.getElementById("categoryId").innerHTML = option;
-        document.getElementById("filterCategory").innerHTML = filterOption;
+    }
+    else {
+
+        window.scrollTo({
+
+            top: 0,
+
+            behavior: "smooth"
+
+        });
+
+    }
+
+
+    // ========================================================
+    // FOCUS ITEM NAME
+    // ========================================================
+
+    setTimeout(function () {
+
+        document.getElementById(
+            "itemName"
+        ).focus();
+
+    }, 500);
+
+}
+
+
+// ============================================================
+// EDIT MENU BY ID
+// ============================================================
+
+function editMenuById(id) {
+
+    console.log(
+        "Edit clicked:",
+        id
+    );
+
+
+    fetch(
+        MENU_API + "/" + id,
+        {
+
+            method: "GET",
+
+            headers: {
+
+                "Authorization":
+                    "Bearer " + authToken
+
+            }
+
+        }
+    )
+
+    .then(function (response) {
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Unable to load menu item"
+            );
+
+        }
+
+
+        return response.json();
 
     })
 
-    .catch(err => {
+    .then(function (menu) {
 
-        console.log(err);
+        editMenu(menu);
 
-        alert("Unable to load categories");
+    })
+
+    .catch(function (error) {
+
+        console.error(
+            "Edit Error:",
+            error
+        );
+
+
+        alert(
+            "Unable to load menu item"
+        );
 
     });
 
 }
-// =================================================
-// LOAD MENU
-// =================================================
 
-function loadMenu() {
 
-    console.log("Loading menu...");
-
-    fetch(MENU_API, {
-        headers: {
-            "Authorization": "Bearer " + token
-        }
-    })
-    .then(res => {
-
-        console.log("Status:", res.status);
-
-        if (!res.ok) {
-            throw new Error("Menu Load Failed");
-        }
-
-        return res.json();
-    })
-    .then(data => {
-
-        console.log("Menu Data:", data);
-
-        displayMenu(data);
-
-    })
-    .catch(err => {
-        console.error(err);
-    });
-}
-
-
-
-
-
-
-// =================================================
-// DISPLAY MENU CARDS
-// =================================================
-
-
-function displayMenu(menuList){
-
-	console.log("displayMenu() called");
-	console.log(menuList);
-
-	let container = document.getElementById("menuCardContainer");
-
-	console.log("Container:", container);
-	
-let cards="";
-
-
-
-menuList.forEach(m=>{
-
-
-let img;
-
-
-if (
-    m.image &&
-    m.image.trim() !== "" &&
-    m.image !== "null" &&
-    m.image !== "string"
-) {
-
-    img = IMAGE_PATH + m.image;
-
-} else {
-
-    img = "images/menu/default-food.jpg";
-
-}
-
-
-
-
-
-cards += `
-
-
-<div class="col-md-4 mb-4">
-
-
-<div class="card shadow h-100">
-
-
-<img src="${img}"
-     class="card-img-top menu-image"
-     onerror="this.src='images/menu/default-food.jpg'">
-
-style="
-height:220px;
-object-fit:cover;
-border-radius:10px 10px 0 0;
-">
-
-
-
-<div class="card-body">
-
-
-
-<h5 class="card-title">
-
-${m.itemName}
-
-</h5>
-
-
-
-
-<p>
-<b>Category:</b>
-${m.category?.categoryName ?? m.categoryName ?? ""}
-</p>
-
-
-
-<p>
-
-<b>Description:</b>
-
-${m.description ?? ""}
-
-</p>
-
-
-
-
-<h4 class="text-success">
-
-₹ ${m.price}
-
-</h4>
-
-
-
-
-<span class="badge bg-primary">
-
-${m.status}
-
-</span>
-
-
-
-<div class="d-flex justify-content-between mt-3">
-
-<button class="btn btn-warning w-48"
-onclick='editMenu(${JSON.stringify(m).replace(/'/g,"&#39;")})'>
-<i class="fa fa-edit"></i> Edit
-</button>
-
-<button class="btn btn-danger w-48"
-onclick="deleteMenu(${m.itemId})">
-<i class="fa fa-trash"></i> Delete
-</button>
-
-</div>
-
-
-
-
-</div>
-
-
-</div>
-
-
-</div>
-
-
-
-`;
-
-
-
-});
-
-
-
-
-console.log("Cards Length:", cards.length);
-console.log(cards);
-
-document.getElementById("menuCardContainer").innerHTML = cards;
-
-console.log(
-    "After Insert:",
-    document.getElementById("menuCardContainer").innerHTML.length
-);
-
-
-}
-
-
-
-
-
-
-
-// =================================================
-// SAVE MENU
-// =================================================
-
-
-function saveMenu(){
-
-
-let formData = new FormData();
-
-
-
-formData.append(
-"itemName",
-document.getElementById("itemName").value
-);
-
-
-
-formData.append(
-"categoryId",
-document.getElementById("categoryId").value
-);
-
-
-
-formData.append(
-"description",
-document.getElementById("description").value
-);
-
-
-
-formData.append(
-"price",
-document.getElementById("price").value
-);
-
-
-
-formData.append(
-"status",
-document.getElementById("status").value
-);
-
-
-
-
-let image =
-document.getElementById("menuImage").files[0];
-
-
-
-if(image){
-
-formData.append("image",image);
-
-}
-
-
-
-
-fetch(MENU_API,{
-
-method:"POST",
-
-headers:{
-
-"Authorization":
-"Bearer "+token
-
-},
-
-body:formData
-
-
-})
-
-
-.then(res=>res.text())
-
-
-.then(msg=>{
-
-
-alert(msg);
-
-clearForm();
-
-loadMenu();
-
-
-})
-
-
-.catch(err=>{
-
-
-console.log(err);
-
-
-});
-
-
-}
-
-
-
-
-
-
-
-// =================================================
-// EDIT MENU
-// =================================================
-
-
-function editMenu(m){
-
-
-
-document.getElementById("itemId").value =
-m.itemId;
-
-
-
-document.getElementById("itemName").value =
-m.itemName;
-
-
-
-document.getElementById("categoryId").value =
-m.categoryId;
-
-
-
-document.getElementById("description").value =
-m.description ?? "";
-
-
-
-document.getElementById("price").value =
-m.price;
-
-
-
-document.getElementById("status").value =
-m.status;
-
-
-
-document.getElementById("menuImage").value="";
-
-
-
-
-
-if (
-    m.image &&
-    m.image !== "" &&
-    m.image !== "null"
-) {
-
-    document.getElementById("previewImage").src =
-        IMAGE_PATH + m.image;
-
-} else {
-
-    document.getElementById("previewImage").src =
-        "images/menu/default-food.jpg";
-
-}
-
-}
-
-
-// =================================================
+// ============================================================
 // UPDATE MENU
-// =================================================
+// ============================================================
+
+function updateMenu() {
+
+    const id =
+        document.getElementById(
+            "itemId"
+        ).value;
 
 
-function updateMenu(){
+    if (id === "") {
+
+        alert(
+            "Please select a menu item to update"
+        );
+
+        return;
+
+    }
 
 
-let id =
-document.getElementById("itemId").value;
+    const itemName =
+        document.getElementById(
+            "itemName"
+        ).value.trim();
 
 
-
-let formData = new FormData();
-
-
-
-formData.append(
-"itemName",
-document.getElementById("itemName").value
-);
+    const categoryId =
+        document.getElementById(
+            "categoryId"
+        ).value;
 
 
-
-formData.append(
-"categoryId",
-document.getElementById("categoryId").value
-);
-
+    const description =
+        document.getElementById(
+            "description"
+        ).value.trim();
 
 
-formData.append(
-"description",
-document.getElementById("description").value
-);
+    const price =
+        document.getElementById(
+            "price"
+        ).value;
 
 
-
-formData.append(
-"price",
-document.getElementById("price").value
-);
-
+    const status =
+        document.getElementById(
+            "status"
+        ).value;
 
 
-formData.append(
-"status",
-document.getElementById("status").value
-);
+    // ========================================================
+    // VALIDATION
+    // ========================================================
+
+    if (itemName === "") {
+
+        alert(
+            "Please enter item name"
+        );
+
+        return;
+
+    }
 
 
+    if (categoryId === "") {
+
+        alert(
+            "Please select category"
+        );
+
+        return;
+
+    }
 
 
-let image =
-document.getElementById("menuImage").files[0];
+    if (price === "" ||
+        Number(price) <= 0) {
+
+        alert(
+            "Please enter valid price"
+        );
+
+        return;
+
+    }
 
 
+    const formData =
+        new FormData();
 
-if(image){
 
-formData.append("image",image);
+    formData.append(
+        "itemName",
+        itemName
+    );
+
+
+    formData.append(
+        "categoryId",
+        categoryId
+    );
+
+
+    formData.append(
+        "description",
+        description
+    );
+
+
+    formData.append(
+        "price",
+        price
+    );
+
+
+    formData.append(
+        "status",
+        status
+    );
+
+
+    // ========================================================
+    // IMAGE
+    // ========================================================
+
+    const image =
+        document.getElementById(
+            "menuImage"
+        ).files[0];
+
+
+    // Only send image when user selects a new one.
+
+    if (image) {
+
+        formData.append(
+            "image",
+            image
+        );
+
+    }
+
+
+    console.log(
+        "Updating menu:",
+        id
+    );
+
+
+    fetch(
+        MENU_API + "/" + id,
+        {
+
+            method: "PUT",
+
+            headers: {
+
+                "Authorization":
+                    "Bearer " + authToken
+
+            },
+
+            body: formData
+
+        }
+    )
+
+    .then(async function (response) {
+
+        const message =
+            await response.text();
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                message ||
+                "Update Menu Failed"
+            );
+
+        }
+
+
+        return message;
+
+    })
+
+    .then(function (message) {
+
+        alert(message);
+
+
+        clearForm();
+
+
+        loadMenu();
+
+    })
+
+    .catch(function (error) {
+
+        console.error(
+            "Update Error:",
+            error
+        );
+
+
+        alert(
+            "Unable to update menu.\n" +
+            error.message
+        );
+
+    });
 
 }
 
 
-
-
-fetch(MENU_API+"/"+id,{
-
-method:"PUT",
-
-headers:{
-
-"Authorization":
-"Bearer "+token
-
-},
-
-body:formData
-
-
-})
-
-
-.then(res=>res.text())
-
-
-.then(msg=>{
-
-
-alert(msg);
-
-clearForm();
-
-loadMenu();
-
-
-})
-
-
-.catch(err=>console.log(err));
-
-
-}
-
-
-
-
-
-
-
-// =================================================
+// ============================================================
 // DELETE MENU
-// =================================================
+// ============================================================
+
+function deleteMenu(id) {
+
+    if (
+        !confirm(
+            "Are you sure you want to delete this menu item?"
+        )
+    ) {
+
+        return;
+
+    }
 
 
-function deleteMenu(id){
+    fetch(
+        MENU_API + "/" + id,
+        {
+
+            method: "DELETE",
+
+            headers: {
+
+                "Authorization":
+                    "Bearer " + authToken
+
+            }
+
+        }
+    )
+
+    .then(async function (response) {
+
+        const message =
+            await response.text();
 
 
+        if (!response.ok) {
 
-if(!confirm("Delete this menu item?"))
-return;
+            throw new Error(
+                message ||
+                "Delete Menu Failed"
+            );
+
+        }
 
 
+        return message;
+
+    })
+
+    .then(function (message) {
+
+        alert(message);
 
 
-fetch(MENU_API+"/"+id,{
+        loadMenu();
 
-method:"DELETE",
+    })
 
-headers:{
+    .catch(function (error) {
 
-"Authorization":
-"Bearer "+token
+        console.error(
+            "Delete Error:",
+            error
+        );
+
+
+        alert(
+            "Unable to delete menu.\n" +
+            error.message
+        );
+
+    });
 
 }
 
 
-})
-
-
-.then(res=>res.text())
-
-
-.then(msg=>{
-
-
-alert(msg);
-
-loadMenu();
-
-
-})
-
-
-.catch(err=>console.log(err));
-
-
-
-}
-
-
-
-
-
-
-
-
-// =================================================
+// ============================================================
 // CLEAR FORM
-// =================================================
+// ============================================================
+
+function clearForm() {
+
+    document.getElementById(
+        "itemId"
+    ).value = "";
 
 
-function clearForm(){
+    document.getElementById(
+        "itemName"
+    ).value = "";
 
 
-document.getElementById("itemId").value="";
+    document.getElementById(
+        "categoryId"
+    ).value = "";
 
 
-document.getElementById("itemName").value="";
+    document.getElementById(
+        "description"
+    ).value = "";
 
 
-document.getElementById("categoryId").selectedIndex=0;
+    document.getElementById(
+        "price"
+    ).value = "";
 
 
-document.getElementById("description").value="";
+    document.getElementById(
+        "status"
+    ).value =
+        "AVAILABLE";
 
 
-document.getElementById("price").value="";
+    document.getElementById(
+        "menuImage"
+    ).value = "";
 
 
-document.getElementById("status").value="AVAILABLE";
+    document.getElementById(
+        "previewImage"
+    ).src =
+        DEFAULT_IMAGE;
 
 
-document.getElementById("menuImage").value="";
+    console.log(
+        "Form cleared"
+    );
+
+}
 
 
+// ============================================================
+// ESCAPE HTML
+// ============================================================
 
-document.getElementById("previewImage").src =
-"images/menu/default-food.jpg";
+function escapeHTML(value) {
 
+    if (value === null ||
+        value === undefined) {
+
+        return "";
+
+    }
+
+
+    return String(value)
+
+        .replace(/&/g, "&amp;")
+
+        .replace(/</g, "&lt;")
+
+        .replace(/>/g, "&gt;")
+
+        .replace(/"/g, "&quot;")
+
+        .replace(/'/g, "&#039;");
 
 }

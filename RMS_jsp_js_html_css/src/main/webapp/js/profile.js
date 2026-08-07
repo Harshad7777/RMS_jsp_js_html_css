@@ -14,7 +14,8 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
 
-    const API = "http://localhost:8080/api/users/" + userId;
+	const PROFILE_API = "http://localhost:8080/api/users/profile";
+	const CHANGE_PASSWORD_API = "http://localhost:8080/api/users/change-password";
 
 
 
@@ -28,16 +29,11 @@ document.addEventListener("DOMContentLoaded", function () {
     function loadProfile() {
 
 
-        fetch(API, {
+		fetch(PROFILE_API, {
 
-            method:"GET",
-
-            headers: {
-
-                "Authorization": "Bearer " + token
-
-            }
-
+		    headers: {
+		        Authorization: "Bearer " + token
+		    }
         })
 
 
@@ -154,31 +150,24 @@ document.addEventListener("DOMContentLoaded", function () {
 
         };
 
+		fetch(PROFILE_API, {
 
+		    method: "PUT",
 
-        fetch(API, {
+		    headers: {
+		        "Content-Type": "application/json",
+		        Authorization: "Bearer " + token
+		    },
 
+		    body: JSON.stringify({
 
-            method:"PUT",
+		        fullName: document.getElementById("fullName").value,
+		        email: document.getElementById("email").value,
+		        mobile: document.getElementById("mobile").value
 
+		    })
 
-            headers:{
-
-
-                "Content-Type":"application/json",
-
-
-                "Authorization":
-                "Bearer "+token
-
-
-            },
-
-
-            body:JSON.stringify(user)
-
-
-        })
+		})
 
 
         .then(response=>{
@@ -265,107 +254,46 @@ document.addEventListener("DOMContentLoaded", function () {
 
         }
 
+		fetch(CHANGE_PASSWORD_API, {
 
+		    method: "PUT",
 
+		    headers: {
+		        "Content-Type": "application/json",
+		        Authorization: "Bearer " + token
+		    },
 
+		    body: JSON.stringify({
 
-        fetch(API,{
+		        oldPassword: document.getElementById("oldPassword").value,
+		        newPassword: document.getElementById("newPassword").value,
+		        confirmPassword: document.getElementById("confirmPassword").value
 
-            headers:{
+		    })
 
-                "Authorization":
-                "Bearer "+token
+		})
+		.then(response => {
 
-            }
+		    if (!response.ok)
+		        throw new Error();
 
+		    return response.text();
 
-        })
+		})
+		.then(message => {
 
+		    alert(message);
 
-        .then(response=>response.json())
+		    document.getElementById("passwordForm").reset();
 
+		})
+		.catch(() => {
 
-        .then(user=>{
+		    alert("Password Change Failed");
 
-
-            user.password = newPassword;
-
-
-            return fetch(API,{
-
-
-                method:"PUT",
-
-
-                headers:{
-
-
-                    "Content-Type":"application/json",
-
-
-                    "Authorization":
-                    "Bearer "+token
-
-
-                },
-
-
-                body:JSON.stringify(user)
-
-
-
-            });
-
-
-
-        })
-
-
-
-        .then(response=>{
-
-
-            if(!response.ok){
-
-                throw new Error();
-
-            }
-
-
-            return response.text();
-
-
-        })
-
-
-        .then(message=>{
-
-
-            alert(message);
-
-
-            document
-            .getElementById("passwordForm")
-            .reset();
-
-
-        })
-
-
-        .catch(error=>{
-
-
-            console.log(error);
-
-            alert("Password Change Failed");
-
-
-        });
-
+		});
 
 
     });
-
-
 
 });

@@ -159,21 +159,21 @@
                             <input type="password"
                                    id="oldPassword"
                                    class="form-control mb-3"
-                                   placeholder="Old Password">
+                                   placeholder="Old Password" required>
 
 
 
                             <input type="password"
                                    id="newPassword"
                                    class="form-control mb-3"
-                                   placeholder="New Password">
+                                   placeholder="New Password" required>
 
 
 
                             <input type="password"
                                    id="confirmPassword"
                                    class="form-control mb-3"
-                                   placeholder="Confirm Password">
+                                   placeholder="Confirm Password" required>
 
 
 
