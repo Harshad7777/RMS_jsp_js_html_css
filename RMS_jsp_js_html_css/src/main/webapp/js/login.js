@@ -1,8 +1,8 @@
-document.getElementById("loginForm").addEventListener("submit", function(e){
+document.getElementById("loginForm").addEventListener("submit", function(e) {
 
     e.preventDefault();
 
-    const username = document.getElementById("username").value;
+    const username = document.getElementById("username").value.trim();
     const password = document.getElementById("password").value;
 
     fetch("http://localhost:8080/api/auth/login", {
@@ -31,27 +31,41 @@ document.getElementById("loginForm").addEventListener("submit", function(e){
     })
 
     .then(data => {
-		console.log(data);   // <-- Add this
-        // Save Login Details
+
+        console.log("LOGIN RESPONSE:", data);
+
+        // Save login details
         localStorage.setItem("token", data.token);
         localStorage.setItem("userId", data.userId);
         localStorage.setItem("username", data.username);
         localStorage.setItem("role", data.role);
 
+        console.log("ROLE:", data.role);
+
         alert("Login Successful");
 
-        // Redirect according to role
+        // =====================================
+        // REDIRECT ACCORDING TO ROLE
+        // =====================================
+
         if (data.role === "ADMIN") {
 
             window.location.href = "dashboard.jsp";
 
-        } else if (data.role === "STAFF") {
+        }
+        else if (data.role === "STAFF") {
 
             window.location.href = "dashboard.jsp";
 
-        } else {
+        }
+        else if (data.role === "CHEF") {
 
-            alert("Invalid Role");
+            window.location.href = "chef.jsp";
+
+        }
+        else {
+
+            alert("Invalid Role: " + data.role);
 
         }
 
@@ -59,7 +73,7 @@ document.getElementById("loginForm").addEventListener("submit", function(e){
 
     .catch(error => {
 
-        console.log(error);
+        console.error("LOGIN ERROR:", error);
 
         document.getElementById("message").innerHTML =
             "Invalid Username or Password";

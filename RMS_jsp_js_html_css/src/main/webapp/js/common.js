@@ -14,18 +14,106 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 
 });
+// =====================================================
+// COMMON AUTHENTICATION
+// =====================================================
 
-// Logout
+const AUTH_TOKEN =
+    localStorage.getItem("token");
+
+const USER_ROLE =
+    localStorage.getItem("role");
+
+
+// =====================================================
+// LOGIN CHECK
+// =====================================================
+
+if (!AUTH_TOKEN) {
+
+    window.location.href =
+        "login.jsp";
+}
+
+
+// =====================================================
+// PAGE LOAD
+// =====================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        // -------------------------------------------------
+        // DISPLAY USERNAME
+        // -------------------------------------------------
+
+        const usernameElement =
+            document.getElementById("username");
+
+        const storedUsername =
+            localStorage.getItem("username");
+
+
+        if (usernameElement) {
+
+            usernameElement.innerText =
+                storedUsername ||
+                "User";
+        }
+
+
+        // -------------------------------------------------
+        // ROLE BASED SIDEBAR
+        // -------------------------------------------------
+
+        document
+            .querySelectorAll(".admin-menu")
+            .forEach(function (menu) {
+
+                menu.style.display =
+                    USER_ROLE === "ADMIN"
+                        ? "block"
+                        : "none";
+            });
+
+
+        document
+            .querySelectorAll(".chef-menu")
+            .forEach(function (menu) {
+
+                menu.style.display =
+                    USER_ROLE === "CHEF"
+                        ? "block"
+                        : "none";
+            });
+
+
+        document
+            .querySelectorAll(".staff-menu")
+            .forEach(function (menu) {
+
+                menu.style.display =
+                    USER_ROLE === "STAFF"
+                        ? "block"
+                        : "none";
+            });
+    }
+);
+
+
+// =====================================================
+// LOGOUT
+// =====================================================
+
 function logout() {
 
-    if (!confirm("Are you sure you want to logout?")) {
-        return;
-    }
-
     localStorage.removeItem("token");
-    localStorage.removeItem("userId");
-    localStorage.removeItem("username");
+
     localStorage.removeItem("role");
 
-    window.location.href = "login.jsp";
+    localStorage.removeItem("username");
+
+    window.location.href =
+        "login.jsp";
 }

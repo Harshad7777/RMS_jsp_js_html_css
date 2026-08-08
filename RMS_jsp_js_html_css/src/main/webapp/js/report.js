@@ -1,8 +1,12 @@
-const REPORT_API = "http://localhost:8080/api/report/sales/date";
+"use strict";
 
+const REPORT_API = "http://localhost:8080/api/report";
 
 const token = localStorage.getItem("token");
 
+// =====================================================
+// LOGIN CHECK
+// =====================================================
 
 if (!token) {
 
@@ -13,63 +17,247 @@ if (!token) {
 }
 
 
+// =====================================================
+// PAGE LOAD
+// =====================================================
 
-document.addEventListener("DOMContentLoaded", loadReport);
+document.addEventListener("DOMContentLoaded", function () {
+
+    loadReport();
+
+});
 
 
+// =====================================================
+// LOAD COMPLETE REPORT
+// =====================================================
 
-function loadReport() {
+async function loadReport() {
+
+    console.log("Loading report...");
 
 
-    fetch(REPORT_API, {
+    try {
 
-        method: "GET",
+        // =================================================
+        // LOAD DATE WISE SALES
+        // =================================================
 
-        headers: {
+        const salesResponse = await fetch(
+            REPORT_API + "/sales/date",
+            {
+                method: "GET",
 
-            "Authorization": "Bearer " + token,
+                headers: {
+                    "Authorization": "Bearer " + token,
+                    "Accept": "application/json"
+                }
+            }
+        );
 
-            "Content-Type": "application/json"
+
+        // =================================================
+        // AUTH ERROR
+        // =================================================
+
+        if (
+            salesResponse.status === 401 ||
+            salesResponse.status === 403
+        ) {
+
+            localStorage.removeItem("token");
+
+            alert("Session expired. Please login again.");
+
+            window.location.href = "login.jsp";
+
+            return;
+        }
+
+
+        // =================================================
+        // OTHER ERROR
+        // =================================================
+
+        if (!salesResponse.ok) {
+
+            throw new Error(
+                "Sales API Error: " +
+                salesResponse.status
+            );
 
         }
 
-    })
+
+        // =================================================
+        // READ JSON
+        // =================================================
+
+        const salesData =
+            await salesResponse.json();
 
 
-    .then(response => {
+        console.log(
+            "DATE WISE SALES:",
+            salesData
+        );
 
 
-        if (!response.ok) {
+        // =================================================
+        // DISPLAY DATE WISE SALES
+        // =================================================
 
-            throw new Error("Report loading failed");
+        displaySalesReport(salesData);
+
+
+        // =================================================
+        // LOAD TOTAL SALES
+        // =================================================
+
+        await loadTotalSales();
+
+
+        // =================================================
+        // LOAD TOTAL ORDERS
+        // =================================================
+
+        await loadTotalOrders();
+
+
+        // =================================================
+        // LOAD CUSTOMERS
+        // =================================================
+
+        await loadCustomers();
+
+
+        // =================================================
+        // LOAD TOP MENU
+        // =================================================
+
+        await loadTopMenu();
+
+
+        // =================================================
+        // GENERATED DATE
+        // =================================================
+
+        const generatedDate =
+            document.getElementById("generatedDate");
+
+        if (generatedDate) {
+
+            generatedDate.textContent =
+                new Date().toLocaleString("en-IN");
 
         }
 
 
-        return response.json();
+        console.log("Report loaded successfully.");
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "REPORT ERROR:",
+            error
+        );
 
 
-    })
+        const table =
+            document.getElementById("reportTable");
 
 
-    .then(data => {
+        if (table) {
+
+            table.innerHTML = `
+
+                <tr>
+
+                    <td
+                        colspan="3"
+                        class="text-center text-danger py-5">
+
+                        <i
+                            class="fa-solid fa-triangle-exclamation fa-2x mb-3">
+                        </i>
+
+                        <br>
+
+                        <strong>
+                            Unable to load report
+                        </strong>
+
+                        <br>
+
+                        <small>
+                            ${escapeHtml(error.message)}
+                        </small>
+
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+
+    }
+
+}
 
 
-        let rows = "";
+// =====================================================
+// DISPLAY DATE WISE SALES
+// =====================================================
 
-        let totalSales = 0;
+function displaySalesReport(data) {
+
+    const table =
+        document.getElementById("reportTable");
 
 
+    if (!table) {
 
-        if(data.length === 0){
+        console.error(
+            "reportTable element not found."
+        );
+
+        return;
+
+    }
 
 
-            rows = `
+    let rows = "";
+
+    let totalSales = 0;
+
+    let totalOrders = 0;
+
+
+    // =================================================
+    // NO DATA
+    // =================================================
+
+    if (
+        !Array.isArray(data) ||
+        data.length === 0
+    ) {
+
+        rows = `
 
             <tr>
 
-                <td colspan="3" 
+                <td
+                    colspan="3"
                     class="text-center text-muted py-5">
+
+                    <i
+                        class="fa-solid fa-chart-line fa-2x mb-3">
+                    </i>
+
+                    <br>
 
                     No Sales Report Available
 
@@ -77,94 +265,589 @@ function loadReport() {
 
             </tr>
 
+        `;
+
+    }
+
+    else {
+
+        data.forEach(function (report) {
+
+            const orders =
+                Number(report.totalOrders || 0);
+
+            const sales =
+                Number(report.totalSales || 0);
+
+
+            totalOrders += orders;
+
+            totalSales += sales;
+
+
+            rows += `
+
+                <tr>
+
+                    <td class="text-center">
+
+                        ${escapeHtml(
+                            report.reportDate
+                        )}
+
+                    </td>
+
+
+                    <td class="text-center">
+
+                        ${orders}
+
+                    </td>
+
+
+                    <td class="text-end">
+
+                        ₹${sales.toFixed(2)}
+
+                    </td>
+
+                </tr>
+
             `;
 
+        });
+
+    }
+
+
+    table.innerHTML = rows;
+
+
+    // =================================================
+    // REPORT DAYS
+    // =================================================
+
+    const reportDays =
+        document.getElementById("reportDays");
+
+
+    if (reportDays) {
+
+        reportDays.textContent =
+            Array.isArray(data)
+                ? data.length
+                : 0;
+
+    }
+
+
+    // =================================================
+    // FALLBACK TOTALS
+    // =================================================
+
+    setText(
+        "totalSales",
+        totalSales.toFixed(2)
+    );
+
+    setText(
+        "totalSalesFooter",
+        totalSales.toFixed(2)
+    );
+
+    setText(
+        "summarySales",
+        totalSales.toFixed(2)
+    );
+
+
+    setText(
+        "totalOrders",
+        totalOrders
+    );
+
+    setText(
+        "summaryOrders",
+        totalOrders
+    );
+
+}
+
+
+// =====================================================
+// TOTAL SALES
+// GET /api/report/sales
+// =====================================================
+
+async function loadTotalSales() {
+
+    try {
+
+        const response =
+            await fetch(
+                REPORT_API + "/sales",
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            "Bearer " + token,
+
+                        "Accept":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Total Sales API Error: " +
+                response.status
+            );
+
+        }
+
+
+        const total =
+            Number(
+                await response.json()
+            );
+
+
+        console.log(
+            "TOTAL SALES:",
+            total
+        );
+
+
+        setText(
+            "totalSales",
+            total.toFixed(2)
+        );
+
+
+        setText(
+            "totalSalesFooter",
+            total.toFixed(2)
+        );
+
+
+        setText(
+            "summarySales",
+            total.toFixed(2)
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "TOTAL SALES ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// TOTAL PAID ORDERS
+// GET /api/report/orders
+// =====================================================
+
+async function loadTotalOrders() {
+
+    try {
+
+        const response =
+            await fetch(
+                REPORT_API + "/orders",
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            "Bearer " + token,
+
+                        "Accept":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Total Orders API Error: " +
+                response.status
+            );
+
+        }
+
+
+        const total =
+            Number(
+                await response.json()
+            );
+
+
+        console.log(
+            "TOTAL PAID ORDERS:",
+            total
+        );
+
+
+        setText(
+            "totalOrders",
+            total
+        );
+
+
+        setText(
+            "summaryOrders",
+            total
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "TOTAL ORDERS ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// TOTAL CUSTOMERS
+// GET /api/report/customer
+// =====================================================
+
+async function loadCustomers() {
+
+    try {
+
+        const response =
+            await fetch(
+                REPORT_API + "/customer",
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            "Bearer " + token,
+
+                        "Accept":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Customer API Error: " +
+                response.status
+            );
+
+        }
+
+
+        const total =
+            Number(
+                await response.json()
+            );
+
+
+        console.log(
+            "ACTIVE CUSTOMERS:",
+            total
+        );
+
+
+        setText(
+            "totalCustomers",
+            total
+        );
+
+
+        setText(
+            "summaryCustomers",
+            total
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "CUSTOMER ERROR:",
+            error
+        );
+
+    }
+
+}
+
+
+// =====================================================
+// TOP SELLING MENU
+// GET /api/report/top-menu
+// =====================================================
+
+async function loadTopMenu() {
+
+    const table =
+        document.getElementById(
+            "topMenuTable"
+        );
+
+
+    if (!table) {
+
+        return;
+
+    }
+
+
+    try {
+
+        const response =
+            await fetch(
+                REPORT_API + "/top-menu",
+                {
+                    method: "GET",
+
+                    headers: {
+                        "Authorization":
+                            "Bearer " + token,
+
+                        "Accept":
+                            "application/json"
+                    }
+                }
+            );
+
+
+        if (!response.ok) {
+
+            throw new Error(
+                "Top Menu API Error: " +
+                response.status
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "TOP MENU:",
+            data
+        );
+
+
+        let rows = "";
+
+
+        if (
+            !Array.isArray(data) ||
+            data.length === 0
+        ) {
+
+            rows = `
+
+                <tr>
+
+                    <td
+                        colspan="4"
+                        class="text-center text-muted py-4">
+
+                        No top-selling menu data available.
+
+                    </td>
+
+                </tr>
+
+            `;
 
         }
 
         else {
 
+            data.forEach(
+                function (item, index) {
+
+                    const itemName =
+                        item.itemName || "-";
 
 
-            data.forEach(report => {
+                    const quantity =
+                        Number(
+                            item.totalQuantity || 0
+                        );
 
 
-
-                totalSales += Number(report.totalSales);
-
-
-
-                rows += `
-
-                <tr>
+                    const sales =
+                        Number(
+                            item.totalSales || 0
+                        );
 
 
-                    <td class="text-center">
+                    rows += `
 
-                        ${report.reportDate}
+                        <tr>
 
-                    </td>
+                            <td class="text-center fw-bold">
 
+                                ${index + 1}
 
-                    <td class="text-center">
-
-                        ${report.totalOrders}
-
-                    </td>
+                            </td>
 
 
-                    <td class="text-center">
+                            <td>
 
-                        ₹${Number(report.totalSales).toFixed(2)}
+                                ${escapeHtml(
+                                    itemName
+                                )}
 
-                    </td>
-
-
-                </tr>
-
-
-                `;
+                            </td>
 
 
-            });
+                            <td class="text-center">
 
+                                ${quantity}
+
+                            </td>
+
+
+                            <td class="text-end">
+
+                                ₹${sales.toFixed(2)}
+
+                            </td>
+
+                        </tr>
+
+                    `;
+
+                }
+            );
 
         }
 
 
+        table.innerHTML = rows;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "TOP MENU ERROR:",
+            error
+        );
 
 
-        document.getElementById("reportTable").innerHTML = rows;
+        table.innerHTML = `
+
+            <tr>
+
+                <td
+                    colspan="4"
+                    class="text-center text-danger py-4">
+
+                    Unable to load top menu.
+
+                    <br>
+
+                    <small>
+                        ${escapeHtml(error.message)}
+                    </small>
+
+                </td>
+
+            </tr>
+
+        `;
+
+    }
+
+}
 
 
-        document.getElementById("totalSales").innerHTML =
-            totalSales.toFixed(2);
+// =====================================================
+// PRINT REPORT
+// =====================================================
+
+function printReport() {
+
+    window.print();
+
+}
 
 
+// =====================================================
+// SET TEXT
+// =====================================================
 
-        document.getElementById("totalSalesFooter").innerHTML =
-            totalSales.toFixed(2);
+function setText(id, value) {
 
-
-
-        document.getElementById("generatedDate").innerHTML =
-            new Date().toLocaleString();
-
-
-
-    })
+    const element =
+        document.getElementById(id);
 
 
-    .catch(error => {
+    if (element) {
+
+        element.textContent = value;
+
+    }
+
+}
 
 
-        console.error("REPORT ERROR:", error);
+// =====================================================
+// HTML ESCAPE
+// =====================================================
 
+function escapeHtml(value) {
 
-        alert("Unable to load report");
+    return String(value ?? "")
 
+        .replace(
+            /&/g,
+            "&amp;"
+        )
 
-    });
+        .replace(
+            /</g,
+            "&lt;"
+        )
 
+        .replace(
+            />/g,
+            "&gt;"
+        )
+
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+
+        .replace(
+            /'/g,
+            "&#039;"
+        );
 
 }

@@ -1,16 +1,116 @@
 const role = localStorage.getItem("role");
-var token = localStorage.getItem("token");
+const token = localStorage.getItem("token");
 
-// If user is not logged in
+// ==========================================
+// LOGIN CHECK
+// ==========================================
+
 if (!token) {
+
     window.location.href = "login.jsp";
-}
-
-// Hide Admin menus for STAFF
-if (role === "STAFF") {
-
-    document.querySelectorAll(".admin-menu").forEach(function(menu) {
-        menu.style.display = "none";
-    });
 
 }
+
+
+// ==========================================
+// ROLE BASED SIDEBAR
+// ==========================================
+
+document.addEventListener("DOMContentLoaded", function () {
+
+    // --------------------------------------
+    // ADMIN
+    // --------------------------------------
+
+    if (role === "ADMIN") {
+
+        // Admin sees admin menu
+        document
+            .querySelectorAll(".admin-menu")
+            .forEach(function (menu) {
+
+                menu.style.display = "block";
+
+            });
+
+        // Hide chef menu
+        document
+            .querySelectorAll(".chef-menu")
+            .forEach(function (menu) {
+
+                menu.style.display = "none";
+
+            });
+
+    }
+
+
+    // --------------------------------------
+    // STAFF
+    // --------------------------------------
+
+    else if (role === "STAFF") {
+
+        // Hide admin-only menu
+        document
+            .querySelectorAll(".admin-menu")
+            .forEach(function (menu) {
+
+                menu.style.display = "none";
+
+            });
+
+        // Hide chef menu
+        document
+            .querySelectorAll(".chef-menu")
+            .forEach(function (menu) {
+
+                menu.style.display = "none";
+
+            });
+
+    }
+
+
+    // --------------------------------------
+    // CHEF
+    // --------------------------------------
+
+    else if (role === "CHEF") {
+
+        // Hide admin/staff menu
+        document
+            .querySelectorAll(".admin-menu")
+            .forEach(function (menu) {
+
+                menu.style.display = "none";
+
+            });
+
+        // Show chef menu
+        document
+            .querySelectorAll(".chef-menu")
+            .forEach(function (menu) {
+
+                menu.style.display = "block";
+
+            });
+
+    }
+
+
+    // --------------------------------------
+    // INVALID ROLE
+    // --------------------------------------
+
+    else {
+
+        alert("Invalid Role");
+
+        localStorage.clear();
+
+        window.location.href = "login.jsp";
+
+    }
+
+});
