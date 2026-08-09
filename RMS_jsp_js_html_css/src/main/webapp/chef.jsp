@@ -1,58 +1,72 @@
 <%@ page language="java"
-         contentType="text/html;charset=UTF-8"
-         pageEncoding="UTF-8"%>
+    contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
 
-<%@ include file="includes/header.jsp"%>
-
-<%@ include file="includes/sidebar.jsp"%>
-
-<%@ include file="includes/navbar.jsp"%>
+<%@ include file="includes/header.jsp" %>
+<%@ include file="includes/sidebar.jsp" %>
+<%@ include file="includes/navbar.jsp" %>
 
 
-<!-- ===================================================== -->
-<!-- CHEF DASHBOARD -->
-<!-- ===================================================== -->
+<!-- =====================================================
+     APPLICATION CONFIGURATION
+===================================================== -->
 
-<div class="container-fluid py-4">
+<div id="appConfig"
+     data-context-path="${pageContext.request.contextPath}">
+</div>
 
-    <!-- HEADER -->
 
-    <div class="d-flex justify-content-between align-items-center mb-4">
+<div class="container-fluid mt-4">
+
+
+    <!-- =================================================
+         HEADER
+    ================================================= -->
+
+    <div class="d-flex justify-content-between
+                align-items-center mb-4">
 
         <div>
 
-            <h2 class="fw-bold">
+            <h4 class="mb-1">
 
-                <i class="fa-solid fa-utensils text-primary"></i>
+                <i class="fa-solid fa-fire-burner"></i>
 
                 Kitchen Dashboard
 
-            </h2>
+            </h4>
 
-            <p class="text-muted mb-0">
-                Manage and prepare restaurant orders
-            </p>
+            <small class="text-muted">
+
+                Manage incoming restaurant orders
+
+            </small>
 
         </div>
 
-        <button
-            class="btn btn-primary"
-            onclick="loadKitchenOrders()">
 
-            <i class="fa-solid fa-rotate"></i>
+        <div>
 
-            Refresh
+            <i class="fa-solid fa-user-chef"></i>
 
-        </button>
+            <strong id="chefName">
+
+                Chef
+
+            </strong>
+
+        </div>
 
     </div>
 
 
-    <!-- ================================================= -->
-    <!-- STATISTICS -->
-    <!-- ================================================= -->
 
-    <div class="row g-3 mb-4">
+    <!-- =================================================
+         STATISTICS
+    ================================================= -->
+
+    <div class="row g-4 mb-4">
+
 
         <!-- NEW -->
 
@@ -62,27 +76,14 @@
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                    <div class="text-muted">
+                        NEW
+                    </div>
 
-                        <div>
+                    <div class="fs-2 fw-bold"
+                         id="newCount">
 
-                            <h6 class="text-muted">
-                                New Orders
-                            </h6>
-
-                            <h2
-                                id="newCount"
-                                class="fw-bold text-warning">
-
-                                0
-
-                            </h2>
-
-                        </div>
-
-                        <i
-                            class="fa-solid fa-bell fa-2x text-warning">
-                        </i>
+                        0
 
                     </div>
 
@@ -91,6 +92,7 @@
             </div>
 
         </div>
+
 
 
         <!-- ACCEPTED -->
@@ -101,27 +103,14 @@
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                    <div class="text-muted">
+                        ACCEPTED
+                    </div>
 
-                        <div>
+                    <div class="fs-2 fw-bold"
+                         id="acceptedCount">
 
-                            <h6 class="text-muted">
-                                Accepted
-                            </h6>
-
-                            <h2
-                                id="acceptedCount"
-                                class="fw-bold text-info">
-
-                                0
-
-                            </h2>
-
-                        </div>
-
-                        <i
-                            class="fa-solid fa-check fa-2x text-info">
-                        </i>
+                        0
 
                     </div>
 
@@ -130,6 +119,7 @@
             </div>
 
         </div>
+
 
 
         <!-- PREPARING -->
@@ -140,27 +130,14 @@
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                    <div class="text-muted">
+                        PREPARING
+                    </div>
 
-                        <div>
+                    <div class="fs-2 fw-bold"
+                         id="preparingCount">
 
-                            <h6 class="text-muted">
-                                Preparing
-                            </h6>
-
-                            <h2
-                                id="preparingCount"
-                                class="fw-bold text-danger">
-
-                                0
-
-                            </h2>
-
-                        </div>
-
-                        <i
-                            class="fa-solid fa-fire fa-2x text-danger">
-                        </i>
+                        0
 
                     </div>
 
@@ -169,6 +146,7 @@
             </div>
 
         </div>
+
 
 
         <!-- READY -->
@@ -179,27 +157,14 @@
 
                 <div class="card-body">
 
-                    <div class="d-flex justify-content-between">
+                    <div class="text-muted">
+                        READY
+                    </div>
 
-                        <div>
+                    <div class="fs-2 fw-bold"
+                         id="readyCount">
 
-                            <h6 class="text-muted">
-                                Ready
-                            </h6>
-
-                            <h2
-                                id="readyCount"
-                                class="fw-bold text-success">
-
-                                0
-
-                            </h2>
-
-                        </div>
-
-                        <i
-                            class="fa-solid fa-circle-check fa-2x text-success">
-                        </i>
+                        0
 
                     </div>
 
@@ -212,48 +177,96 @@
     </div>
 
 
-    <!-- ================================================= -->
-    <!-- FILTER -->
-    <!-- ================================================= -->
 
-    <div class="card shadow-sm mb-4">
+    <!-- =================================================
+         ORDERS HEADER
+    ================================================= -->
 
-        <div class="card-body">
+    <div class="d-flex justify-content-between
+                align-items-center mb-3">
 
-            <div class="row">
+        <h4 class="mb-0">
 
-                <div class="col-md-4">
+            <i class="fa-solid fa-kitchen-set"></i>
 
-                    <label class="form-label">
-                        Kitchen Status
-                    </label>
+            Kitchen Orders
 
-                    <select
-                        id="statusFilter"
-                        class="form-select"
-                        onchange="filterOrders()">
+        </h4>
 
-                        <option value="ALL">
-                            All Orders
-                        </option>
 
-                        <option value="NEW">
-                            New
-                        </option>
+        <button
+            type="button"
+            class="btn btn-outline-primary"
+            onclick="loadDashboard()">
 
-                        <option value="ACCEPTED">
-                            Accepted
-                        </option>
+            <i class="fa-solid fa-rotate"></i>
 
-                        <option value="PREPARING">
-                            Preparing
-                        </option>
+            Refresh
 
-                        <option value="READY">
-                            Ready
-                        </option>
+        </button>
 
-                    </select>
+    </div>
+
+
+
+    <!-- =================================================
+         STATUS FILTER
+    ================================================= -->
+
+    <div class="mb-3">
+
+        <select
+            id="statusFilter"
+            class="form-select"
+            onchange="filterOrders()">
+
+            <option value="ALL">
+                All Orders
+            </option>
+
+            <option value="NEW">
+                New
+            </option>
+
+            <option value="ACCEPTED">
+                Accepted
+            </option>
+
+            <option value="PREPARING">
+                Preparing
+            </option>
+
+            <option value="READY">
+                Ready
+            </option>
+
+            <option value="SERVED">
+                Served
+            </option>
+
+        </select>
+
+    </div>
+
+
+
+    <!-- =================================================
+         ORDERS
+    ================================================= -->
+
+    <div id="ordersContainer"
+         class="row g-4">
+
+        <div class="col-12">
+
+            <div class="text-center py-5">
+
+                <div class="spinner-border text-primary">
+                </div>
+
+                <div class="mt-2 text-muted">
+
+                    Loading kitchen orders...
 
                 </div>
 
@@ -264,21 +277,14 @@
     </div>
 
 
-    <!-- ================================================= -->
-    <!-- KITCHEN ORDERS -->
-    <!-- ================================================= -->
-
-    <div
-        class="row g-4"
-        id="kitchenOrders">
-
-    </div>
-
 </div>
 
 
-<!-- ===================================================== -->
-<!-- FOOTER -->
-<!-- ===================================================== -->
+<!-- =====================================================
+     CHEF JAVASCRIPT
+===================================================== -->
 
-<%@ include file="includes/footer.jsp"%>
+<script src="${pageContext.request.contextPath}/js/chef.js"></script>
+
+
+<%@ include file="includes/footer.jsp" %>

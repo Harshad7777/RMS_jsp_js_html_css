@@ -1,317 +1,970 @@
-// =====================================================
-// CHEF DASHBOARD
-// =====================================================
+"use strict";
+
+/* =====================================================
+   CHEF DASHBOARD
+   ===================================================== */
+
+console.log("======================================");
+console.log("Chef Dashboard Loaded");
+console.log("======================================");
 
 
-// =====================================================
-// AUTHENTICATION
-// =====================================================
+/* =====================================================
+   CONTEXT PATH
+   ===================================================== */
 
-const chefToken =
+const CONTEXT_PATH =
+    window.location.pathname.substring(
+        0,
+        window.location.pathname.indexOf("/", 1)
+    );
+
+const BASE_URL =
+    window.location.origin +
+    CONTEXT_PATH;
+
+
+/* =====================================================
+   API
+   ===================================================== */
+
+const ORDER_API =
+    BASE_URL + "/api/order";
+
+
+const KITCHEN_TODAY_API =
+    ORDER_API + "/kitchen/today";
+
+
+const KITCHEN_STATS_API =
+    ORDER_API + "/kitchen/stats";
+
+
+const KITCHEN_STATUS_API =
+    ORDER_API + "/kitchen/detail";
+
+
+console.log("Context Path:", CONTEXT_PATH);
+console.log("Order API:", ORDER_API);
+
+
+/* =====================================================
+   TOKEN
+   ===================================================== */
+
+const token =
     localStorage.getItem("token");
 
-const chefRole =
-    localStorage.getItem("role");
+
+/* =====================================================
+   CHEF ROLE
+   ===================================================== */
+
+const role =
+    localStorage.getItem("role") ||
+    localStorage.getItem("chefRole");
 
 
-if (!chefToken) {
+console.log("Logged in role:", role);
 
-    alert("Please Login First");
+
+/* =====================================================
+   CHEF ID
+   ===================================================== */
+
+let chefId =
+    localStorage.getItem("chefId");
+
+
+if (chefId) {
+    chefId = parseInt(chefId);
+}
+
+console.log("Chef ID:", chefId);
+
+
+/* =====================================================
+   AUTH CHECK
+   ===================================================== */
+
+if (!token) {
+
+    console.error("No JWT token found.");
 
     window.location.href =
-        "login.jsp";
+        CONTEXT_PATH + "/login.jsp";
+
 }
 
 
-// =====================================================
-// ROLE CHECK
-// =====================================================
+/* =====================================================
+   ROLE CHECK
+   ===================================================== */
 
-if (chefRole !== "CHEF") {
+if (
+    role &&
+    role !== "CHEF" &&
+    role !== "ADMIN"
+) {
 
-    alert("Access Denied");
+    console.error(
+        "Invalid role:",
+        role
+    );
 
-    localStorage.clear();
+    localStorage.removeItem("token");
+    localStorage.removeItem("role");
+    localStorage.removeItem("chefRole");
 
     window.location.href =
-        "login.jsp";
+        CONTEXT_PATH + "/login.jsp";
 }
 
 
-// =====================================================
-// API
-// =====================================================
+/* =====================================================
+   HEADERS
+   ===================================================== */
 
-const KITCHEN_API =
-    "http://localhost:8080/api/kitchen";
+function getHeaders() {
+
+    const headers = {
+        "Content-Type": "application/json"
+    };
+
+    if (token) {
+
+        headers["Authorization"] =
+            "Bearer " + token;
+    }
+
+    return headers;
+}
 
 
-// =====================================================
-// GLOBAL DATA
-// =====================================================
+/* =====================================================
+   HANDLE RESPONSE
+   ===================================================== */
 
-let allOrders = [];
+async function handleResponse(response) {
+
+    const contentType =
+        response.headers.get(
+            "content-type"
+        ) || "";
+
+    const text =
+        await response.text();
 
 
-// =====================================================
-// PAGE LOAD
-// =====================================================
+    if (!response.ok) {
+
+        console.error(
+            "HTTP Error:",
+            response.status,
+            text
+        );
+
+        throw new Error(
+            "HTTP " +
+            response.status +
+            ": " +
+            text
+        );
+    }
+
+
+    if (!text) {
+        return null;
+    }
+
+
+    if (
+        contentType.includes(
+            "application/json"
+        )
+    ) {
+
+        try {
+
+            return JSON.parse(text);
+
+        } catch (error) {
+
+            console.error(
+                "Invalid JSON:",
+                text
+            );
+
+            throw new Error(
+                "Invalid JSON response from server."
+            );
+        }
+    }
+
+
+    return text;
+}
+
+
+/* =====================================================
+   PAGE LOAD
+   ===================================================== */
 
 document.addEventListener(
     "DOMContentLoaded",
     function () {
 
-        loadKitchenOrders();
+        console.log(
+            "Initializing Chef Dashboard..."
+        );
 
+        loadDashboard();
+
+
+        /*
+         * Refresh every 30 seconds
+         */
+        setInterval(
+            loadDashboard,
+            30000
+        );
     }
 );
 
 
-// =====================================================
-// LOAD KITCHEN ORDERS
-// =====================================================
+/* =====================================================
+   LOAD DASHBOARD
+   ===================================================== */
 
-function loadKitchenOrders() {
+async function loadDashboard() {
 
-    fetch(
-        KITCHEN_API,
-        {
-
-            method: "GET",
-
-            headers: {
-
-                "Authorization":
-                    "Bearer " + chefToken
-
-            }
-
-        }
-    )
-
-    .then(async response => {
-
-        if (response.status === 401 ||
-            response.status === 403) {
-
-            localStorage.clear();
-
-            window.location.href =
-                "login.jsp";
-
-            return;
-        }
+    console.log(
+        "Loading chef dashboard..."
+    );
 
 
-        if (!response.ok) {
+    await Promise.allSettled([
 
-            const message =
-                await response.text();
+        loadKitchenOrders(),
 
-            throw new Error(message);
-        }
+        loadKitchenStats()
 
-
-        return response.json();
-
-    })
-
-    .then(data => {
-
-        if (!data) {
-            return;
-        }
+    ]);
+}
 
 
-        allOrders = Array.isArray(data)
-            ? data
-            : [];
+/* =====================================================
+   LOAD KITCHEN ORDERS
+   ===================================================== */
+
+async function loadKitchenOrders() {
+
+    console.log(
+        "Loading kitchen orders..."
+    );
+
+    console.log(
+        "Kitchen Orders URL:",
+        KITCHEN_TODAY_API
+    );
 
 
-        updateStatistics();
+    try {
 
-        filterOrders();
+        const response =
+            await fetch(
+                KITCHEN_TODAY_API,
+                {
+                    method: "GET",
+                    headers: getHeaders()
+                }
+            );
 
-    })
 
-    .catch(error => {
+        const data =
+            await handleResponse(
+                response
+            );
+
+
+        console.log(
+            "Kitchen Orders:",
+            data
+        );
+
+
+        renderKitchenOrders(data);
+
+
+    } catch (error) {
 
         console.error(
-            "Kitchen API Error:",
+            "Kitchen Orders Error:",
+            error
+        );
+
+
+        showError(
+            "Unable to load kitchen orders. " +
+            error.message
+        );
+    }
+}
+
+
+/* =====================================================
+   LOAD KITCHEN STATISTICS
+   ===================================================== */
+
+async function loadKitchenStats() {
+
+    console.log(
+        "Loading kitchen statistics..."
+    );
+
+    console.log(
+        "Kitchen Stats URL:",
+        KITCHEN_STATS_API
+    );
+
+
+    try {
+
+        const response =
+            await fetch(
+                KITCHEN_STATS_API,
+                {
+                    method: "GET",
+                    headers: getHeaders()
+                }
+            );
+
+
+        const data =
+            await handleResponse(
+                response
+            );
+
+
+        console.log(
+            "Kitchen Stats:",
+            data
+        );
+
+
+        updateKitchenStats(data);
+
+
+    } catch (error) {
+
+        console.error(
+            "Kitchen Stats Error:",
+            error
+        );
+
+
+        updateKitchenStats({
+            newCount: 0,
+            acceptedCount: 0,
+            preparingCount: 0,
+            readyCount: 0
+        });
+    }
+}
+
+
+/* =====================================================
+   UPDATE STATS
+   ===================================================== */
+
+function updateKitchenStats(stats) {
+
+    if (!stats) {
+        return;
+    }
+
+
+    setElementText(
+        "newCount",
+        stats.newCount
+    );
+
+
+    setElementText(
+        "acceptedCount",
+        stats.acceptedCount
+    );
+
+
+    setElementText(
+        "preparingCount",
+        stats.preparingCount
+    );
+
+
+    setElementText(
+        "readyCount",
+        stats.readyCount
+    );
+
+
+    /*
+     * Alternative IDs if your JSP uses cards
+     */
+
+    setElementText(
+        "newOrders",
+        stats.newCount
+    );
+
+
+    setElementText(
+        "acceptedOrders",
+        stats.acceptedCount
+    );
+
+
+    setElementText(
+        "preparingOrders",
+        stats.preparingCount
+    );
+
+
+    setElementText(
+        "readyOrders",
+        stats.readyCount
+    );
+}
+
+
+/* =====================================================
+   SET ELEMENT TEXT
+   ===================================================== */
+
+function setElementText(
+    id,
+    value
+) {
+
+    const element =
+        document.getElementById(id);
+
+    if (element) {
+
+        element.textContent =
+            value ?? 0;
+    }
+}
+
+
+/* =====================================================
+   RENDER KITCHEN ORDERS
+   ===================================================== */
+
+function renderKitchenOrders(
+    orders
+) {
+
+    const container =
+        document.getElementById(
+            "kitchenOrders"
+        );
+
+
+    if (!container) {
+
+        console.warn(
+            "Element #kitchenOrders not found."
+        );
+
+        return;
+    }
+
+
+    container.innerHTML = "";
+
+
+    if (
+        !orders ||
+        !Array.isArray(orders) ||
+        orders.length === 0
+    ) {
+
+        container.innerHTML = `
+            <div class="alert alert-info">
+                No kitchen orders for today.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    orders.forEach(
+        function (order) {
+
+            container.appendChild(
+                createOrderCard(order)
+            );
+        }
+    );
+}
+
+
+/* =====================================================
+   CREATE ORDER CARD
+   ===================================================== */
+
+function createOrderCard(
+    order
+) {
+
+    const card =
+        document.createElement(
+            "div"
+        );
+
+
+    card.className =
+        "card mb-3 shadow-sm";
+
+
+    const status =
+        order.kitchenStatus ||
+        "NEW";
+
+
+    const statusClass =
+        getStatusClass(status);
+
+
+    card.innerHTML = `
+
+        <div class="card-header
+                    d-flex
+                    justify-content-between
+                    align-items-center">
+
+            <div>
+                <strong>
+                    ${escapeHtml(
+                        order.orderNo ||
+                        ("Order #" +
+                         (order.orderId || ""))
+                    )}
+                </strong>
+            </div>
+
+            <span class="badge ${statusClass}">
+                ${escapeHtml(status)}
+            </span>
+
+        </div>
+
+
+        <div class="card-body">
+
+            <div class="row">
+
+                <div class="col-md-4">
+
+                    <strong>Customer:</strong>
+
+                    <div>
+                        ${escapeHtml(
+                            order.customerName ||
+                            "-"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <strong>Table:</strong>
+
+                    <div>
+                        ${escapeHtml(
+                            order.tableNumber ||
+                            "-"
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <strong>Item:</strong>
+
+                    <div>
+                        ${escapeHtml(
+                            order.itemName ||
+                            "-"
+                        )}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <hr>
+
+
+            <div class="row">
+
+                <div class="col-md-4">
+
+                    <strong>Quantity:</strong>
+
+                    <div>
+                        ${order.quantity ?? 0}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <strong>Price:</strong>
+
+                    <div>
+                        ₹${formatNumber(
+                            order.price
+                        )}
+                    </div>
+
+                </div>
+
+
+                <div class="col-md-4">
+
+                    <strong>Subtotal:</strong>
+
+                    <div>
+                        ₹${formatNumber(
+                            order.subtotal
+                        )}
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            ${
+                order.kitchenNote
+                    ? `
+                    <div class="mt-3">
+                        <strong>
+                            Kitchen Note:
+                        </strong>
+
+                        <div class="alert alert-warning mt-1 mb-0">
+                            ${escapeHtml(
+                                order.kitchenNote
+                            )}
+                        </div>
+                    </div>
+                    `
+                    : ""
+            }
+
+
+            <div class="mt-3">
+
+                <strong>
+                    Update Status:
+                </strong>
+
+
+                <div class="btn-group mt-2">
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-secondary"
+                        onclick="updateKitchenStatus(
+                            ${order.orderDetailId},
+                            'NEW'
+                        )">
+                        New
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-primary"
+                        onclick="updateKitchenStatus(
+                            ${order.orderDetailId},
+                            'ACCEPTED'
+                        )">
+                        Accept
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-warning"
+                        onclick="updateKitchenStatus(
+                            ${order.orderDetailId},
+                            'PREPARING'
+                        )">
+                        Preparing
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-success"
+                        onclick="updateKitchenStatus(
+                            ${order.orderDetailId},
+                            'READY'
+                        )">
+                        Ready
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-sm btn-dark"
+                        onclick="updateKitchenStatus(
+                            ${order.orderDetailId},
+                            'SERVED'
+                        )">
+                        Served
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+    `;
+
+
+    return card;
+}
+
+
+/* =====================================================
+   UPDATE KITCHEN STATUS
+   ===================================================== */
+
+async function updateKitchenStatus(
+    orderDetailId,
+    status
+) {
+
+    if (!orderDetailId) {
+
+        alert(
+            "Order Detail ID is missing."
+        );
+
+        return;
+    }
+
+
+    if (!chefId) {
+
+        alert(
+            "Chef ID is missing."
+        );
+
+        return;
+    }
+
+
+    const url =
+        KITCHEN_STATUS_API +
+        "/" +
+        encodeURIComponent(
+            orderDetailId
+        ) +
+        "/status?status=" +
+        encodeURIComponent(
+            status
+        ) +
+        "&chefId=" +
+        encodeURIComponent(
+            chefId
+        );
+
+
+    console.log(
+        "Updating kitchen status:",
+        url
+    );
+
+
+    try {
+
+        const response =
+            await fetch(
+                url,
+                {
+                    method: "PUT",
+                    headers: getHeaders()
+                }
+            );
+
+
+        const result =
+            await handleResponse(
+                response
+            );
+
+
+        console.log(
+            "Status update result:",
+            result
+        );
+
+
+        alert(
+            typeof result === "string"
+                ? result
+                : "Kitchen status updated successfully."
+        );
+
+
+        /*
+         * Reload dashboard
+         */
+
+        await loadDashboard();
+
+
+    } catch (error) {
+
+        console.error(
+            "Kitchen status update error:",
             error
         );
 
 
         alert(
-            error.message ||
-            "Unable to load kitchen orders"
+            "Unable to update kitchen status.\n\n" +
+            error.message
         );
-
-    });
-}
-
-
-// =====================================================
-// STATISTICS
-// =====================================================
-
-function updateStatistics() {
-
-    let newCount = 0;
-
-    let acceptedCount = 0;
-
-    let preparingCount = 0;
-
-    let readyCount = 0;
-
-
-    allOrders.forEach(order => {
-
-        if (!order.items) {
-            return;
-        }
-
-
-        order.items.forEach(item => {
-
-            const status =
-                item.kitchenStatus;
-
-
-            if (status === "NEW") {
-                newCount++;
-            }
-
-
-            if (status === "ACCEPTED") {
-                acceptedCount++;
-            }
-
-
-            if (status === "PREPARING") {
-                preparingCount++;
-            }
-
-
-            if (status === "READY") {
-                readyCount++;
-            }
-
-        });
-
-    });
-
-
-    const newCountElement =
-        document.getElementById(
-            "newCount"
-        );
-
-
-    const acceptedCountElement =
-        document.getElementById(
-            "acceptedCount"
-        );
-
-
-    const preparingCountElement =
-        document.getElementById(
-            "preparingCount"
-        );
-
-
-    const readyCountElement =
-        document.getElementById(
-            "readyCount"
-        );
-
-
-    if (newCountElement) {
-
-        newCountElement.innerText =
-            newCount;
-    }
-
-
-    if (acceptedCountElement) {
-
-        acceptedCountElement.innerText =
-            acceptedCount;
-    }
-
-
-    if (preparingCountElement) {
-
-        preparingCountElement.innerText =
-            preparingCount;
-    }
-
-
-    if (readyCountElement) {
-
-        readyCountElement.innerText =
-            readyCount;
     }
 }
 
 
-// =====================================================
-// FILTER ORDERS
-// =====================================================
+/* =====================================================
+   STATUS CLASS
+   ===================================================== */
 
-function filterOrders() {
+function getStatusClass(
+    status
+) {
 
-    const filterElement =
-        document.getElementById(
-            "statusFilter"
-        );
+    switch (
+        String(status)
+            .toUpperCase()
+    ) {
 
+        case "NEW":
+            return "bg-secondary";
 
-    if (!filterElement) {
-        return;
+        case "ACCEPTED":
+            return "bg-primary";
+
+        case "PREPARING":
+            return "bg-warning text-dark";
+
+        case "READY":
+            return "bg-success";
+
+        case "SERVED":
+            return "bg-dark";
+
+        default:
+            return "bg-secondary";
     }
-
-
-    const filter =
-        filterElement.value;
-
-
-    let orders =
-        [...allOrders];
-
-
-    if (filter !== "ALL") {
-
-        orders =
-            allOrders.filter(
-                order => {
-
-                    if (!order.items) {
-                        return false;
-                    }
-
-
-                    return order.items.some(
-                        item =>
-                            item.kitchenStatus ===
-                            filter
-                    );
-
-                }
-            );
-    }
-
-
-    displayOrders(orders);
 }
 
 
-// =====================================================
-// DISPLAY ORDERS
-// =====================================================
+/* =====================================================
+   FORMAT NUMBER
+   ===================================================== */
 
-function displayOrders(orders) {
+function formatNumber(
+    value
+) {
+
+    const number =
+        Number(value);
+
+
+    if (
+        Number.isNaN(number)
+    ) {
+
+        return "0.00";
+    }
+
+
+    return number.toFixed(2);
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+   ===================================================== */
+
+function escapeHtml(
+    value
+) {
+
+    if (
+        value === null ||
+        value === undefined
+    ) {
+
+        return "";
+    }
+
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
+        );
+}
+
+
+/* =====================================================
+   SHOW ERROR
+   ===================================================== */
+
+function showError(
+    message
+) {
+
+    console.error(
+        "ERROR:",
+        message
+    );
+
 
     const container =
         document.getElementById(
@@ -324,609 +977,53 @@ function displayOrders(orders) {
     }
 
 
-    container.innerHTML = "";
+    container.innerHTML = `
 
+        <div class="alert alert-danger">
 
-    if (!orders ||
-        orders.length === 0) {
+            <strong>
+                Unable to load kitchen orders.
+            </strong>
 
-        container.innerHTML = `
+            <br>
 
-            <div class="col-12">
+            ${escapeHtml(message)}
 
-                <div class="alert alert-info text-center">
+        </div>
 
-                    <i class="fa-solid fa-kitchen-set"></i>
-
-                    No kitchen orders found.
-
-                </div>
-
-            </div>
-
-        `;
-
-        return;
-    }
-
-
-    orders.forEach(order => {
-
-        let itemsHtml = "";
-
-
-        if (order.items &&
-            order.items.length > 0) {
-
-
-            order.items.forEach(item => {
-
-                const statusClass =
-                    getStatusClass(
-                        item.kitchenStatus
-                    );
-
-
-                const buttons =
-                    getActionButtons(
-                        item
-                    );
-
-
-                itemsHtml += `
-
-                    <div class="border rounded p-3 mb-3">
-
-                        <div class="d-flex
-                                    justify-content-between
-                                    align-items-start">
-
-                            <div>
-
-                                <h6 class="fw-bold mb-1">
-
-                                    ${escapeHtml(
-                                        item.itemName
-                                    )}
-
-                                </h6>
-
-
-                                <small class="text-muted">
-
-                                    Quantity:
-                                    ${item.quantity}
-
-                                </small>
-
-                            </div>
-
-
-                            <span class="badge ${statusClass}">
-
-                                ${item.kitchenStatus}
-
-                            </span>
-
-                        </div>
-
-
-                        <div class="mt-2">
-
-                            <strong>
-                                Price:
-                            </strong>
-
-                            ₹${formatAmount(
-                                item.price
-                            )}
-
-                        </div>
-
-
-                        ${
-                            item.subtotal != null
-                            ?
-                            `
-                            <div>
-
-                                <strong>
-                                    Subtotal:
-                                </strong>
-
-                                ₹${formatAmount(
-                                    item.subtotal
-                                )}
-
-                            </div>
-                            `
-                            :
-                            ""
-                        }
-
-
-                        ${
-                            item.kitchenNote
-                            ?
-                            `
-                            <div class="alert alert-warning mt-3 mb-2">
-
-                                <strong>
-                                    Kitchen Note:
-                                </strong>
-
-                                ${escapeHtml(
-                                    item.kitchenNote
-                                )}
-
-                            </div>
-                            `
-                            :
-                            ""
-                        }
-
-
-                        <div class="mt-3">
-
-                            ${buttons}
-
-                        </div>
-
-                    </div>
-
-                `;
-            });
-
-        }
-
-
-        container.innerHTML += `
-
-            <div class="col-lg-6">
-
-                <div class="card shadow-sm h-100">
-
-                    <div class="card-header
-                                d-flex
-                                justify-content-between
-                                align-items-center">
-
-                        <strong>
-
-                            Order #${escapeHtml(
-                                order.orderNo
-                            )}
-
-                        </strong>
-
-
-                        <span class="badge bg-dark">
-
-                            ${escapeHtml(
-                                order.orderStatus ||
-                                "ACTIVE"
-                            )}
-
-                        </span>
-
-                    </div>
-
-
-                    <div class="card-body">
-
-                        <div class="row mb-3">
-
-                            <div class="col-md-6">
-
-                                <strong>
-                                    Customer:
-                                </strong>
-
-                                <br>
-
-                                ${escapeHtml(
-                                    order.customerName ||
-                                    "Walk-in Customer"
-                                )}
-
-                            </div>
-
-
-                            <div class="col-md-6">
-
-                                <strong>
-                                    Table:
-                                </strong>
-
-                                <br>
-
-                                ${escapeHtml(
-                                    order.tableNumber ||
-                                    "-"
-                                )}
-
-                            </div>
-
-                        </div>
-
-
-                        ${
-                            order.orderType
-                            ?
-                            `
-                            <div class="mb-3">
-
-                                <strong>
-                                    Order Type:
-                                </strong>
-
-                                ${escapeHtml(
-                                    order.orderType
-                                )}
-
-                            </div>
-                            `
-                            :
-                            ""
-                        }
-
-
-                        <hr>
-
-
-                        <h6 class="fw-bold mb-3">
-
-                            <i class="fa-solid fa-utensils"></i>
-
-                            Kitchen Items
-
-                        </h6>
-
-
-                        ${itemsHtml}
-
-
-                        ${
-                            order.remarks
-                            ?
-                            `
-                            <div class="alert alert-secondary">
-
-                                <strong>
-                                    Remarks:
-                                </strong>
-
-                                ${escapeHtml(
-                                    order.remarks
-                                )}
-
-                            </div>
-                            `
-                            :
-                            ""
-                        }
-
-                    </div>
-
-
-                    <div class="card-footer
-                                d-flex
-                                justify-content-between">
-
-                        <strong>
-                            Total:
-                        </strong>
-
-                        <strong>
-
-                            ₹${formatAmount(
-                                order.totalAmount
-                            )}
-
-                        </strong>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        `;
-
-    });
+    `;
 }
 
 
-// =====================================================
-// STATUS CLASS
-// =====================================================
+/* =====================================================
+   MANUAL REFRESH
+   ===================================================== */
 
-function getStatusClass(status) {
+function refreshDashboard() {
 
-    switch (status) {
+    console.log(
+        "Manual dashboard refresh..."
+    );
 
-        case "NEW":
-
-            return "bg-warning text-dark";
-
-
-        case "ACCEPTED":
-
-            return "bg-info text-dark";
-
-
-        case "PREPARING":
-
-            return "bg-danger";
-
-
-        case "READY":
-
-            return "bg-success";
-
-
-        case "SERVED":
-
-            return "bg-secondary";
-
-
-        default:
-
-            return "bg-dark";
-    }
+    loadDashboard();
 }
 
 
-// =====================================================
-// ACTION BUTTONS
-// =====================================================
+/* =====================================================
+   GLOBAL FUNCTIONS
+   ===================================================== */
 
-function getActionButtons(item) {
+window.loadDashboard =
+    loadDashboard;
 
-    if (!item ||
-        !item.orderDetailId) {
+window.loadKitchenOrders =
+    loadKitchenOrders;
 
-        return "";
-    }
+window.loadKitchenStats =
+    loadKitchenStats;
 
+window.updateKitchenStatus =
+    updateKitchenStatus;
 
-    if (item.kitchenStatus === "NEW") {
-
-        return `
-
-            <button
-                class="btn btn-primary w-100"
-                onclick="updateKitchenStatus(
-                    ${item.orderDetailId},
-                    'ACCEPTED'
-                )">
-
-                <i class="fa-solid fa-check"></i>
-
-                Accept Order
-
-            </button>
-
-        `;
-    }
-
-
-    if (item.kitchenStatus === "ACCEPTED") {
-
-        return `
-
-            <button
-                class="btn btn-danger w-100"
-                onclick="updateKitchenStatus(
-                    ${item.orderDetailId},
-                    'PREPARING'
-                )">
-
-                <i class="fa-solid fa-fire"></i>
-
-                Start Preparing
-
-            </button>
-
-        `;
-    }
-
-
-    if (item.kitchenStatus === "PREPARING") {
-
-        return `
-
-            <button
-                class="btn btn-success w-100"
-                onclick="updateKitchenStatus(
-                    ${item.orderDetailId},
-                    'READY'
-                )">
-
-                <i class="fa-solid fa-circle-check"></i>
-
-                Mark Ready
-
-            </button>
-
-        `;
-    }
-
-
-    if (item.kitchenStatus === "READY") {
-
-        return `
-
-            <div class="alert alert-success
-                        text-center
-                        mb-0">
-
-                <i class="fa-solid fa-check-double"></i>
-
-                Ready
-
-            </div>
-
-        `;
-    }
-
-
-    return "";
-}
-
-
-// =====================================================
-// UPDATE KITCHEN STATUS
-// =====================================================
-
-function updateKitchenStatus(
-    orderDetailId,
-    status
-) {
-
-
-    if (!orderDetailId) {
-
-        alert(
-            "Invalid Order Detail ID"
-        );
-
-        return;
-    }
-
-
-    fetch(
-        KITCHEN_API +
-        "/" +
-        orderDetailId +
-        "/status",
-        {
-
-            method: "PUT",
-
-            headers: {
-
-                "Content-Type":
-                    "application/json",
-
-                "Authorization":
-                    "Bearer " +
-                    chefToken
-
-            },
-
-            body: JSON.stringify({
-
-                status: status
-
-            })
-
-        }
-    )
-
-    .then(async response => {
-
-        const message =
-            await response.text();
-
-
-        if (response.status === 401 ||
-            response.status === 403) {
-
-            localStorage.clear();
-
-            window.location.href =
-                "login.jsp";
-
-            return;
-        }
-
-
-        if (!response.ok) {
-
-            throw new Error(
-                message ||
-                "Unable to update order"
-            );
-        }
-
-
-        return message;
-
-    })
-
-    .then(message => {
-
-        if (!message) {
-            return;
-        }
-
-
-        alert(message);
-
-        loadKitchenOrders();
-
-    })
-
-    .catch(error => {
-
-        console.error(
-            "Status Update Error:",
-            error
-        );
-
-
-        alert(
-            error.message ||
-            "Unable to update order"
-        );
-
-    });
-}
-
-
-// =====================================================
-// FORMAT MONEY
-// =====================================================
-
-function formatAmount(value) {
-
-    if (value == null ||
-        value === "") {
-
-        return "0.00";
-    }
-
-
-    const number =
-        Number(value);
-
-
-    if (Number.isNaN(number)) {
-
-        return "0.00";
-    }
-
-
-    return number.toFixed(2);
-}
-
-
-// =====================================================
-// HTML ESCAPE
-// =====================================================
-
-function escapeHtml(value) {
-
-    if (value == null) {
-        return "";
-    }
-
-
-    return String(value)
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#039;");
-}
+window.refreshDashboard =
+    refreshDashboard;

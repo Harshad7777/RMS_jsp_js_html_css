@@ -1,59 +1,107 @@
 "use strict";
 
 /*
-===========================================================
- ORDER MANAGEMENT JAVASCRIPT
- Restaurant Management System
-===========================================================
-*/
-
+ * ========================================================
+ * RESTAURANT MANAGEMENT SYSTEM
+ * ORDER PAGE JAVASCRIPT
+ * ========================================================
+ *
+ * Authentication:
+ * JWT token is stored in localStorage:
+ *
+ * localStorage.setItem("token", response.token);
+ * localStorage.setItem("userId", response.userId);
+ * localStorage.setItem("username", response.username);
+ * localStorage.setItem("role", response.role);
+ *
+ * ========================================================
+ */
 
 // ========================================================
 // API URLs
 // ========================================================
 
-const ORDER_API =
-    "http://localhost:8080/api/order";
-
-const CUSTOMER_API =
-    "http://localhost:8080/api/customer";
-
-const MENU_API =
-    "http://localhost:8080/api/menu";
-
-
-// ========================================================
-// JWT TOKEN
-// ========================================================
-
-const token =
-    localStorage.getItem("token");
-
+const ORDER_API = "http://localhost:8080/api/order";
+const CUSTOMER_API = "http://localhost:8080/api/customer";
+const MENU_API = "http://localhost:8080/api/menu";
 
 // ========================================================
 // GLOBAL VARIABLES
 // ========================================================
 
 let menuList = [];
-
 let items = [];
-
 let allOrders = [];
 
+// ========================================================
+// GET CURRENT TOKEN
+// ========================================================
+
+function getToken() {
+
+    return localStorage.getItem("token");
+
+}
+
+// ========================================================
+// GET LOGGED-IN USER ID
+// ========================================================
+
+function getUserId() {
+
+    const userId = localStorage.getItem("userId");
+
+    if (!userId) {
+        return null;
+    }
+
+    const id = Number(userId);
+
+    return Number.isFinite(id) ? id : null;
+
+}
+
+// ========================================================
+// GET LOGGED-IN USERNAME
+// ========================================================
+
+function getUsername() {
+
+    return localStorage.getItem("username") || "Admin";
+
+}
+
+// ========================================================
+// GET LOGGED-IN ROLE
+// ========================================================
+
+function getRole() {
+
+    return localStorage.getItem("role") || "";
+
+}
 
 // ========================================================
 // LOGIN CHECK
 // ========================================================
 
-if (!token) {
+function checkLogin() {
 
-    alert("Please Login First");
+    const currentToken = getToken();
 
-    window.location.href =
-        "login.jsp";
+    if (!currentToken) {
+
+        alert("Please Login First.");
+
+        window.location.href = "login.jsp";
+
+        return false;
+
+    }
+
+    return true;
 
 }
-
 
 // ========================================================
 // PAGE LOAD
@@ -63,17 +111,24 @@ document.addEventListener(
     "DOMContentLoaded",
     function () {
 
+        if (!checkLogin()) {
+            return;
+        }
+
         initializePage();
 
     }
 );
-
 
 // ========================================================
 // INITIALIZE PAGE
 // ========================================================
 
 function initializePage() {
+
+    console.log("Logged in user:", getUsername());
+    console.log("User ID:", getUserId());
+    console.log("Role:", getRole());
 
     loadCustomers();
 
@@ -91,9 +146,7 @@ function initializePage() {
     // ----------------------------------------------------
 
     const addItemBtn =
-        document.getElementById(
-            "addItemBtn"
-        );
+        document.getElementById("addItemBtn");
 
     if (addItemBtn) {
 
@@ -110,9 +163,7 @@ function initializePage() {
     // ----------------------------------------------------
 
     const placeOrderBtn =
-        document.getElementById(
-            "placeOrderBtn"
-        );
+        document.getElementById("placeOrderBtn");
 
     if (placeOrderBtn) {
 
@@ -129,9 +180,7 @@ function initializePage() {
     // ----------------------------------------------------
 
     const refreshBtn =
-        document.getElementById(
-            "refreshBtn"
-        );
+        document.getElementById("refreshBtn");
 
     if (refreshBtn) {
 
@@ -156,9 +205,7 @@ function initializePage() {
     // ----------------------------------------------------
 
     const refreshOrders =
-        document.getElementById(
-            "refreshOrders"
-        );
+        document.getElementById("refreshOrders");
 
     if (refreshOrders) {
 
@@ -175,9 +222,7 @@ function initializePage() {
     // ----------------------------------------------------
 
     const searchOrder =
-        document.getElementById(
-            "searchOrder"
-        );
+        document.getElementById("searchOrder");
 
     if (searchOrder) {
 
@@ -194,9 +239,7 @@ function initializePage() {
     // ----------------------------------------------------
 
     const quantity =
-        document.getElementById(
-            "quantity"
-        );
+        document.getElementById("quantity");
 
     if (quantity) {
 
@@ -219,25 +262,77 @@ function initializePage() {
 
 }
 
-
 // ========================================================
 // COMMON FETCH HEADERS
 // ========================================================
 
 function getHeaders() {
 
+    const currentToken = getToken();
+
     return {
 
         "Authorization":
-            "Bearer " + token,
+            currentToken
+                ? "Bearer " + currentToken
+                : "",
 
         "Content-Type":
+            "application/json",
+
+        "Accept":
             "application/json"
 
     };
 
 }
 
+// ========================================================
+// HANDLE API RESPONSE AUTHORIZATION
+// ========================================================
+
+function handleResponseStatus(response) {
+
+    // ----------------------------------------------------
+    // 401 = UNAUTHORIZED
+    // Token missing / expired / invalid
+    // ----------------------------------------------------
+
+    if (response.status === 401) {
+
+        handleUnauthorized();
+
+        return false;
+
+    }
+
+
+    // ----------------------------------------------------
+    // 403 = FORBIDDEN
+    // Token valid but user has no permission
+    // ----------------------------------------------------
+
+    if (response.status === 403) {
+
+        console.error(
+            "403 Forbidden:",
+            response.url
+        );
+
+        alert(
+            "Access Denied.\n\n" +
+            "You are logged in, but your current role " +
+            "does not have permission to access this resource."
+        );
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
 
 // ========================================================
 // LOAD CUSTOMERS
@@ -246,9 +341,7 @@ function getHeaders() {
 async function loadCustomers() {
 
     const customerElement =
-        document.getElementById(
-            "customerId"
-        );
+        document.getElementById("customerId");
 
     if (!customerElement) {
         return;
@@ -274,13 +367,8 @@ async function loadCustomers() {
             );
 
 
-        if (response.status === 401 ||
-            response.status === 403) {
-
-            handleUnauthorized();
-
+        if (!handleResponseStatus(response)) {
             return;
-
         }
 
 
@@ -303,18 +391,23 @@ async function loadCustomers() {
 
         let data = [];
 
-        try {
 
-            data =
-                responseText
-                    ? JSON.parse(responseText)
-                    : [];
+        if (responseText.trim()) {
 
-        } catch (error) {
+            try {
 
-            throw new Error(
-                "Invalid customer API response."
-            );
+                data =
+                    JSON.parse(responseText);
+
+            }
+
+            catch (error) {
+
+                throw new Error(
+                    "Invalid customer API response."
+                );
+
+            }
 
         }
 
@@ -349,11 +442,11 @@ async function loadCustomers() {
                         "option"
                     );
 
-                option.value =
-                    id;
 
-                option.textContent =
-                    name;
+                option.value = id;
+
+                option.textContent = name;
+
 
                 customerElement.appendChild(
                     option
@@ -388,22 +481,17 @@ async function loadCustomers() {
 
 }
 
-
 // ========================================================
 // LOAD MENU
 // ========================================================
-
 async function loadMenu() {
 
     const menuElement =
-        document.getElementById(
-            "menuId"
-        );
+        document.getElementById("menuId");
 
     if (!menuElement) {
         return;
     }
-
 
     try {
 
@@ -412,7 +500,6 @@ async function loadMenu() {
                 Loading Menu...
             </option>
         `;
-
 
         const response =
             await fetch(
@@ -423,20 +510,62 @@ async function loadMenu() {
                 }
             );
 
+        console.log(
+            "MENU STATUS:",
+            response.status
+        );
 
-        if (response.status === 401 ||
-            response.status === 403) {
+        // =================================================
+        // 401 - TOKEN PROBLEM
+        // =================================================
+
+        if (response.status === 401) {
 
             handleUnauthorized();
 
             return;
-
         }
 
+        // =================================================
+        // 403 - PERMISSION PROBLEM
+        // =================================================
+
+        if (response.status === 403) {
+
+            const errorText =
+                await response.text();
+
+            console.error(
+                "MENU 403 RESPONSE:",
+                errorText
+            );
+
+            alert(
+                "Access Denied.\n\n" +
+                "Your logged-in account does not have " +
+                "permission to view menu items."
+            );
+
+            menuElement.innerHTML = `
+                <option value="">
+                    Access Denied
+                </option>
+            `;
+
+            return;
+        }
+
+        // =================================================
+        // READ RESPONSE
+        // =================================================
 
         const responseText =
             await response.text();
 
+        console.log(
+            "MENU RESPONSE:",
+            responseText
+        );
 
         if (!response.ok) {
 
@@ -447,9 +576,11 @@ async function loadMenu() {
                 " " +
                 responseText
             );
-
         }
 
+        // =================================================
+        // PARSE JSON
+        // =================================================
 
         let data = [];
 
@@ -461,21 +592,25 @@ async function loadMenu() {
                     : [];
 
         }
-
         catch (error) {
 
             throw new Error(
                 "Invalid menu API response."
             );
-
         }
 
+        // =================================================
+        // STORE MENU
+        // =================================================
 
         menuList =
             Array.isArray(data)
                 ? data
                 : [];
 
+        // =================================================
+        // BUILD SELECT
+        // =================================================
 
         menuElement.innerHTML = `
             <option value="">
@@ -483,19 +618,16 @@ async function loadMenu() {
             </option>
         `;
 
-
         menuList.forEach(
-            function (menu) {
+            function(menu) {
 
                 const option =
                     document.createElement(
                         "option"
                     );
 
-
                 option.value =
                     menu.itemId;
-
 
                 option.textContent =
                     (menu.itemName ||
@@ -505,17 +637,14 @@ async function loadMenu() {
                         menu.price || 0
                     ).toFixed(2);
 
-
                 menuElement.appendChild(
                     option
                 );
-
             }
         );
 
-
         console.log(
-            "Menu Loaded:",
+            "MENU LOADED SUCCESSFULLY:",
             menuList
         );
 
@@ -528,17 +657,13 @@ async function loadMenu() {
             error
         );
 
-
         menuElement.innerHTML = `
             <option value="">
                 Unable to load menu
             </option>
         `;
-
     }
-
 }
-
 
 // ========================================================
 // ADD ITEM TO CART
@@ -547,14 +672,10 @@ async function loadMenu() {
 function addItem() {
 
     const menuElement =
-        document.getElementById(
-            "menuId"
-        );
+        document.getElementById("menuId");
 
     const quantityElement =
-        document.getElementById(
-            "quantity"
-        );
+        document.getElementById("quantity");
 
 
     if (!menuElement ||
@@ -663,9 +784,7 @@ function addItem() {
 
     if (existing) {
 
-        existing.quantity +=
-            quantity;
-
+        existing.quantity += quantity;
 
         existing.subtotal =
             existing.price *
@@ -678,7 +797,9 @@ function addItem() {
         items.push({
 
             itemId:
-                Number(menu.itemId),
+                Number(
+                    menu.itemId
+                ),
 
             itemName:
                 menu.itemName ||
@@ -708,7 +829,7 @@ function addItem() {
 
 
     // ----------------------------------------------------
-    // RESET MENU AND QUANTITY
+    // RESET
     // ----------------------------------------------------
 
     menuElement.value = "";
@@ -717,7 +838,6 @@ function addItem() {
 
 }
 
-
 // ========================================================
 // SHOW CART
 // ========================================================
@@ -725,14 +845,10 @@ function addItem() {
 function showCart() {
 
     const cartTable =
-        document.getElementById(
-            "cartTable"
-        );
+        document.getElementById("cartTable");
 
     const cartCount =
-        document.getElementById(
-            "cartCount"
-        );
+        document.getElementById("cartCount");
 
 
     if (!cartTable) {
@@ -820,8 +936,7 @@ function showCart() {
                     </td>
 
 
-                    <td
-                        class="text-center">
+                    <td class="text-center">
 
                         <div
                             class="d-flex
@@ -831,8 +946,7 @@ function showCart() {
 
                             <button
                                 type="button"
-                                class="btn btn-outline-secondary
-                                       btn-sm"
+                                class="btn btn-outline-secondary btn-sm"
                                 onclick="decreaseQuantity(${index})">
 
                                 <i class="fa fa-minus"></i>
@@ -840,8 +954,7 @@ function showCart() {
                             </button>
 
 
-                            <span
-                                class="fw-bold">
+                            <span class="fw-bold">
 
                                 ${item.quantity}
 
@@ -850,8 +963,7 @@ function showCart() {
 
                             <button
                                 type="button"
-                                class="btn btn-outline-secondary
-                                       btn-sm"
+                                class="btn btn-outline-secondary btn-sm"
                                 onclick="increaseQuantity(${index})">
 
                                 <i class="fa fa-plus"></i>
@@ -863,8 +975,7 @@ function showCart() {
                     </td>
 
 
-                    <td
-                        class="text-end fw-semibold">
+                    <td class="text-end fw-semibold">
 
                         ₹${Number(
                             item.subtotal
@@ -873,8 +984,7 @@ function showCart() {
                     </td>
 
 
-                    <td
-                        class="text-center">
+                    <td class="text-center">
 
                         <button
                             type="button"
@@ -929,7 +1039,6 @@ function showCart() {
 
 }
 
-
 // ========================================================
 // INCREASE QUANTITY
 // ========================================================
@@ -952,7 +1061,6 @@ function increaseQuantity(index) {
     showCart();
 
 }
-
 
 // ========================================================
 // DECREASE QUANTITY
@@ -985,7 +1093,6 @@ function decreaseQuantity(index) {
     showCart();
 
 }
-
 
 // ========================================================
 // REMOVE ITEM
@@ -1025,7 +1132,6 @@ function removeItem(index) {
     showCart();
 
 }
-
 
 // ========================================================
 // CALCULATE TOTALS
@@ -1099,9 +1205,7 @@ function calculateTotals() {
         total.toFixed(2)
     );
 
-
 }
-
 
 // ========================================================
 // PLACE ORDER
@@ -1110,15 +1214,11 @@ function calculateTotals() {
 async function placeOrder() {
 
     const customerElement =
-        document.getElementById(
-            "customerId"
-        );
+        document.getElementById("customerId");
 
 
     const placeButton =
-        document.getElementById(
-            "placeOrderBtn"
-        );
+        document.getElementById("placeOrderBtn");
 
 
     if (!customerElement) {
@@ -1126,15 +1226,37 @@ async function placeOrder() {
     }
 
 
+    // ----------------------------------------------------
+    // GET USER ID
+    // ----------------------------------------------------
+
+    const staffId =
+        getUserId();
+
+
+    if (!staffId) {
+
+        alert(
+            "Logged-in user information was not found.\n\n" +
+            "Please login again."
+        );
+
+        handleUnauthorized();
+
+        return;
+
+    }
+
+
+    // ----------------------------------------------------
+    // CUSTOMER
+    // ----------------------------------------------------
+
     const customerId =
         Number(
             customerElement.value
         );
 
-
-    // ----------------------------------------------------
-    // CUSTOMER VALIDATION
-    // ----------------------------------------------------
 
     if (!customerId) {
 
@@ -1150,7 +1272,7 @@ async function placeOrder() {
 
 
     // ----------------------------------------------------
-    // CART VALIDATION
+    // CART
     // ----------------------------------------------------
 
     if (items.length === 0) {
@@ -1223,7 +1345,7 @@ async function placeOrder() {
             1,
 
         staffId:
-            14,
+            staffId,
 
         items:
             orderItems
@@ -1300,11 +1422,10 @@ async function placeOrder() {
 
 
         // ------------------------------------------------
-        // AUTH ERROR
+        // 401
         // ------------------------------------------------
 
-        if (response.status === 401 ||
-            response.status === 403) {
+        if (response.status === 401) {
 
             handleUnauthorized();
 
@@ -1314,7 +1435,22 @@ async function placeOrder() {
 
 
         // ------------------------------------------------
-        // ERROR
+        // 403
+        // ------------------------------------------------
+
+        if (response.status === 403) {
+
+            alert(
+                "You do not have permission to place orders."
+            );
+
+            return;
+
+        }
+
+
+        // ------------------------------------------------
+        // OTHER ERROR
         // ------------------------------------------------
 
         if (!response.ok) {
@@ -1342,7 +1478,7 @@ async function placeOrder() {
 
             catch (error) {
 
-                // Response was plain text.
+                // Plain text response.
 
             }
 
@@ -1365,7 +1501,7 @@ async function placeOrder() {
             "Order Placed Successfully";
 
 
-        if (responseText) {
+        if (responseText.trim()) {
 
             try {
 
@@ -1385,12 +1521,8 @@ async function placeOrder() {
 
             catch (error) {
 
-                if (responseText.trim()) {
-
-                    successMessage =
-                        responseText;
-
-                }
+                successMessage =
+                    responseText;
 
             }
 
@@ -1491,7 +1623,6 @@ async function placeOrder() {
 
 }
 
-
 // ========================================================
 // LOAD ORDERS
 // ========================================================
@@ -1499,9 +1630,7 @@ async function placeOrder() {
 async function loadOrders() {
 
     const orderTable =
-        document.getElementById(
-            "orderTable"
-        );
+        document.getElementById("orderTable");
 
 
     if (orderTable) {
@@ -1548,10 +1677,20 @@ async function loadOrders() {
             );
 
 
-        if (response.status === 401 ||
-            response.status === 403) {
+        if (response.status === 401) {
 
             handleUnauthorized();
+
+            return;
+
+        }
+
+
+        if (response.status === 403) {
+
+            alert(
+                "You do not have permission to access orders."
+            );
 
             return;
 
@@ -1577,20 +1716,25 @@ async function loadOrders() {
 
         let data = [];
 
-        try {
 
-            data =
-                responseText
-                    ? JSON.parse(responseText)
-                    : [];
+        if (responseText.trim()) {
 
-        }
+            try {
 
-        catch (error) {
+                data =
+                    JSON.parse(
+                        responseText
+                    );
 
-            throw new Error(
-                "Invalid order API response."
-            );
+            }
+
+            catch (error) {
+
+                throw new Error(
+                    "Invalid order API response."
+                );
+
+            }
 
         }
 
@@ -1666,7 +1810,6 @@ async function loadOrders() {
 
 }
 
-
 // ========================================================
 // RENDER ORDERS
 // ========================================================
@@ -1674,9 +1817,7 @@ async function loadOrders() {
 function renderOrders(data) {
 
     const orderTable =
-        document.getElementById(
-            "orderTable"
-        );
+        document.getElementById("orderTable");
 
 
     if (!orderTable) {
@@ -1726,49 +1867,53 @@ function renderOrders(data) {
                 String(
                     order.orderStatus ||
                     ""
-                ).toUpperCase();
+                )
+                .trim()
+                .toUpperCase();
 
-
-            // --------------------------------------------
-            // STATUS BADGE
-            // --------------------------------------------
 
             let badge =
                 "bg-secondary";
 
 
-            if (status === "PENDING") {
+            if (
+                status === "NEW" ||
+                status === "PENDING"
+            ) {
 
                 badge =
                     "bg-warning text-dark";
 
             }
 
-            else if (status === "COMPLETED") {
-
-                badge =
-                    "bg-success";
-
-            }
-
-            else if (status === "CANCELLED") {
-
-                badge =
-                    "bg-danger";
-
-            }
-
-            else if (status === "PROCESSING") {
+            else if (
+                status === "PROCESSING"
+            ) {
 
                 badge =
                     "bg-info text-dark";
 
             }
 
+            else if (
+                status === "COMPLETED" ||
+                status === "BILLED"
+            ) {
 
-            // --------------------------------------------
-            // DATE
-            // --------------------------------------------
+                badge =
+                    "bg-success";
+
+            }
+
+            else if (
+                status === "CANCELLED"
+            ) {
+
+                badge =
+                    "bg-danger";
+
+            }
+
 
             const orderDate =
                 formatDate(
@@ -1776,15 +1921,14 @@ function renderOrders(data) {
                 );
 
 
-            // --------------------------------------------
-            // CANCEL BUTTON
-            // --------------------------------------------
-
             let cancelButton = "";
 
 
-            if (status !== "CANCELLED" &&
-                status !== "COMPLETED") {
+            if (
+                status !== "CANCELLED" &&
+                status !== "COMPLETED" &&
+                status !== "BILLED"
+            ) {
 
                 cancelButton = `
 
@@ -1805,10 +1949,6 @@ function renderOrders(data) {
 
             }
 
-
-            // --------------------------------------------
-            // ROW
-            // --------------------------------------------
 
             rows += `
 
@@ -1877,9 +2017,7 @@ function renderOrders(data) {
                                 order.orderId
                             )})">
 
-                            <i
-                                class="fa fa-eye">
-                            </i>
+                            <i class="fa fa-eye"></i>
 
                             View
 
@@ -1902,7 +2040,6 @@ function renderOrders(data) {
 
 }
 
-
 // ========================================================
 // DASHBOARD
 // ========================================================
@@ -1910,126 +2047,128 @@ function renderOrders(data) {
 function updateDashboard(orders) {
 
     const todayOrdersElement =
-        document.getElementById("todayOrders");
+        document.getElementById(
+            "todayOrders"
+        );
 
     const pendingElement =
-        document.getElementById("pendingOrders");
+        document.getElementById(
+            "pendingOrders"
+        );
 
     const completedElement =
-        document.getElementById("completedOrders");
+        document.getElementById(
+            "completedOrders"
+        );
 
     const revenueElement =
-        document.getElementById("revenue");
+        document.getElementById(
+            "revenue"
+        );
 
 
     let todayCount = 0;
+
     let pendingCount = 0;
+
     let completedCount = 0;
+
     let revenue = 0;
 
 
-    // ----------------------------------------------------
-    // TODAY
-    // ----------------------------------------------------
+    const today =
+        new Date();
 
-    const today = new Date();
 
     const todayString =
         today.getFullYear() +
         "-" +
-        String(today.getMonth() + 1).padStart(2, "0") +
+        String(
+            today.getMonth() + 1
+        ).padStart(2, "0") +
         "-" +
-        String(today.getDate()).padStart(2, "0");
+        String(
+            today.getDate()
+        ).padStart(2, "0");
 
 
-    // ----------------------------------------------------
-    // PROCESS ORDERS
-    // ----------------------------------------------------
+    orders.forEach(
+        function (order) {
 
-    orders.forEach(function (order) {
-
-        const status =
-            String(
-                order.orderStatus || ""
-            )
-            .trim()
-            .toUpperCase();
+            const status =
+                String(
+                    order.orderStatus || ""
+                )
+                .trim()
+                .toUpperCase();
 
 
-        // ------------------------------------------------
-        // PENDING ORDERS
-        // ------------------------------------------------
-        // Backend is returning NEW for newly created orders.
-        // Therefore NEW must be counted as Pending.
-        //
-        // PROCESSING is also considered pending.
-        // ------------------------------------------------
+            // ------------------------------------------------
+            // PENDING
+            // ------------------------------------------------
 
-        if (
-            status === "NEW" ||
-            status === "PENDING" ||
-            status === "PROCESSING"
-        ) {
+            if (
+                status === "NEW" ||
+                status === "PENDING" ||
+                status === "PROCESSING"
+            ) {
 
-            pendingCount++;
+                pendingCount++;
 
-        }
+            }
 
 
-        // ------------------------------------------------
-        // COMPLETED ORDERS
-        // ------------------------------------------------
+            // ------------------------------------------------
+            // COMPLETED
+            // ------------------------------------------------
 
-        if (status === "COMPLETED") {
+            if (
+                status === "COMPLETED"
+            ) {
 
-            completedCount++;
+                completedCount++;
 
-        }
-
-
-        // ------------------------------------------------
-        // REVENUE
-        // ------------------------------------------------
-        // BILLED and COMPLETED orders represent successful
-        // restaurant revenue.
-        //
-        // CANCELLED and NEW/PENDING orders are excluded.
-        // ------------------------------------------------
-
-        if (
-            status === "BILLED" ||
-            status === "COMPLETED"
-        ) {
-
-            revenue += Number(
-                order.totalAmount || 0
-            );
-
-        }
+            }
 
 
-        // ------------------------------------------------
-        // TODAY'S ORDERS
-        // ------------------------------------------------
+            // ------------------------------------------------
+            // REVENUE
+            // ------------------------------------------------
 
-        const orderDate =
-            getDateOnly(
-                order.orderDate
-            );
+            if (
+                status === "BILLED" ||
+                status === "COMPLETED"
+            ) {
+
+                revenue +=
+                    Number(
+                        order.totalAmount || 0
+                    );
+
+            }
 
 
-        if (orderDate === todayString) {
+            // ------------------------------------------------
+            // TODAY
+            // ------------------------------------------------
 
-            todayCount++;
+            const orderDate =
+                getDateOnly(
+                    order.orderDate
+                );
+
+
+            if (
+                orderDate === todayString
+            ) {
+
+                todayCount++;
+
+            }
 
         }
+    );
 
-    });
-
-
-    // ----------------------------------------------------
-    // UPDATE DASHBOARD
-    // ----------------------------------------------------
 
     setText(
         "todayOrders",
@@ -2055,10 +2194,6 @@ function updateDashboard(orders) {
     );
 
 
-    // ----------------------------------------------------
-    // DEBUG
-    // ----------------------------------------------------
-
     console.log(
         "Dashboard:",
         {
@@ -2070,6 +2205,7 @@ function updateDashboard(orders) {
     );
 
 }
+
 // ========================================================
 // SEARCH ORDERS
 // ========================================================
@@ -2110,23 +2246,23 @@ function filterOrders() {
 
                 const orderId =
                     String(
-                        order.orderId ||
-                        ""
-                    ).toLowerCase();
+                        order.orderId || ""
+                    )
+                    .toLowerCase();
 
 
                 const customer =
                     String(
-                        order.customerName ||
-                        ""
-                    ).toLowerCase();
+                        order.customerName || ""
+                    )
+                    .toLowerCase();
 
 
                 const status =
                     String(
-                        order.orderStatus ||
-                        ""
-                    ).toLowerCase();
+                        order.orderStatus || ""
+                    )
+                    .toLowerCase();
 
 
                 return (
@@ -2144,7 +2280,6 @@ function filterOrders() {
     );
 
 }
-
 
 // ========================================================
 // VIEW ORDER
@@ -2174,10 +2309,6 @@ async function viewOrder(orderId) {
 
     }
 
-
-    // ----------------------------------------------------
-    // RESET MODAL
-    // ----------------------------------------------------
 
     setText(
         "mOrderId",
@@ -2234,10 +2365,6 @@ async function viewOrder(orderId) {
     }
 
 
-    // ----------------------------------------------------
-    // SHOW MODAL
-    // ----------------------------------------------------
-
     const modal =
         bootstrap.Modal.getOrCreateInstance(
             modalElement
@@ -2271,10 +2398,20 @@ async function viewOrder(orderId) {
             );
 
 
-        if (response.status === 401 ||
-            response.status === 403) {
+        if (response.status === 401) {
 
             handleUnauthorized();
+
+            return;
+
+        }
+
+
+        if (response.status === 403) {
+
+            alert(
+                "You do not have permission to view this order."
+            );
 
             return;
 
@@ -2313,7 +2450,7 @@ async function viewOrder(orderId) {
 
 
         // ------------------------------------------------
-        // ORDER SUMMARY
+        // SUMMARY
         // ------------------------------------------------
 
         setText(
@@ -2344,7 +2481,7 @@ async function viewOrder(orderId) {
 
 
         // ------------------------------------------------
-        // LOAD DETAILS
+        // DETAILS
         // ------------------------------------------------
 
         const detailResponse =
@@ -2365,10 +2502,24 @@ async function viewOrder(orderId) {
             );
 
 
-        if (detailResponse.status === 401 ||
-            detailResponse.status === 403) {
+        if (
+            detailResponse.status === 401
+        ) {
 
             handleUnauthorized();
+
+            return;
+
+        }
+
+
+        if (
+            detailResponse.status === 403
+        ) {
+
+            alert(
+                "You do not have permission to view order details."
+            );
 
             return;
 
@@ -2395,22 +2546,24 @@ async function viewOrder(orderId) {
         let details = [];
 
 
-        try {
+        if (detailText.trim()) {
 
-            details =
-                detailText
-                    ? JSON.parse(
+            try {
+
+                details =
+                    JSON.parse(
                         detailText
-                    )
-                    : [];
+                    );
 
-        }
+            }
 
-        catch (error) {
+            catch (error) {
 
-            throw new Error(
-                "Invalid order details response."
-            );
+                throw new Error(
+                    "Invalid order details response."
+                );
+
+            }
 
         }
 
@@ -2421,10 +2574,6 @@ async function viewOrder(orderId) {
 
         }
 
-
-        // ------------------------------------------------
-        // DETAILS TABLE
-        // ------------------------------------------------
 
         if (!detailTable) {
             return;
@@ -2474,7 +2623,8 @@ async function viewOrder(orderId) {
                             </td>
 
 
-                            <td class="text-end">
+                            <td
+                                class="text-end">
 
                                 ₹${Number(
                                     detail.price || 0
@@ -2483,7 +2633,8 @@ async function viewOrder(orderId) {
                             </td>
 
 
-                            <td class="text-center">
+                            <td
+                                class="text-center">
 
                                 ${Number(
                                     detail.quantity || 0
@@ -2492,7 +2643,8 @@ async function viewOrder(orderId) {
                             </td>
 
 
-                            <td class="text-end">
+                            <td
+                                class="text-end">
 
                                 ₹${Number(
                                     detail.subtotal || 0
@@ -2557,7 +2709,6 @@ async function viewOrder(orderId) {
 
 }
 
-
 // ========================================================
 // CANCEL ORDER
 // ========================================================
@@ -2608,10 +2759,28 @@ async function cancelOrder(id) {
             );
 
 
-        if (response.status === 401 ||
-            response.status === 403) {
+        // ------------------------------------------------
+        // 401
+        // ------------------------------------------------
+
+        if (response.status === 401) {
 
             handleUnauthorized();
+
+            return;
+
+        }
+
+
+        // ------------------------------------------------
+        // 403
+        // ------------------------------------------------
+
+        if (response.status === 403) {
+
+            alert(
+                "You do not have permission to cancel orders."
+            );
 
             return;
 
@@ -2639,25 +2808,29 @@ async function cancelOrder(id) {
             "Order Cancelled Successfully";
 
 
-        try {
+        if (responseText.trim()) {
 
-            const json =
-                JSON.parse(
-                    responseText
-                );
+            try {
+
+                const json =
+                    JSON.parse(
+                        responseText
+                    );
 
 
-            message =
-                json.message ||
-                json.response ||
-                json.data ||
-                message;
+                message =
+                    json.message ||
+                    json.response ||
+                    json.data ||
+                    message;
 
-        }
+            }
 
-        catch (error) {
+            catch (error) {
 
-            // Plain text response.
+                // Plain text.
+
+            }
 
         }
 
@@ -2688,16 +2861,19 @@ async function cancelOrder(id) {
 
 }
 
-
 // ========================================================
 // UNAUTHORIZED HANDLER
 // ========================================================
 
 function handleUnauthorized() {
 
-    localStorage.removeItem(
-        "token"
-    );
+    localStorage.removeItem("token");
+
+    localStorage.removeItem("userId");
+
+    localStorage.removeItem("username");
+
+    localStorage.removeItem("role");
 
 
     alert(
@@ -2709,7 +2885,6 @@ function handleUnauthorized() {
         "login.jsp";
 
 }
-
 
 // ========================================================
 // SET TEXT
@@ -2735,7 +2910,6 @@ function setText(
 
 }
 
-
 // ========================================================
 // FORMAT DATE
 // ========================================================
@@ -2743,9 +2917,7 @@ function setText(
 function formatDate(value) {
 
     if (!value) {
-
         return "-";
-
     }
 
 
@@ -2757,9 +2929,11 @@ function formatDate(value) {
             );
 
 
-        if (isNaN(
-            date.getTime()
-        )) {
+        if (
+            isNaN(
+                date.getTime()
+            )
+        ) {
 
             return String(
                 value
@@ -2775,15 +2949,20 @@ function formatDate(value) {
             "en-IN",
             {
 
-                day: "2-digit",
+                day:
+                    "2-digit",
 
-                month: "2-digit",
+                month:
+                    "2-digit",
 
-                year: "numeric",
+                year:
+                    "numeric",
 
-                hour: "2-digit",
+                hour:
+                    "2-digit",
 
-                minute: "2-digit"
+                minute:
+                    "2-digit"
 
             }
         );
@@ -2800,7 +2979,6 @@ function formatDate(value) {
 
 }
 
-
 // ========================================================
 // GET DATE ONLY
 // ========================================================
@@ -2815,10 +2993,6 @@ function getDateOnly(value) {
     const stringValue =
         String(value);
 
-
-    // Handles:
-    // 2026-08-08
-    // 2026-08-08T10:30:00
 
     if (
         /^\d{4}-\d{2}-\d{2}/
@@ -2839,9 +3013,11 @@ function getDateOnly(value) {
         );
 
 
-    if (isNaN(
-        date.getTime()
-    )) {
+    if (
+        isNaN(
+            date.getTime()
+        )
+    ) {
 
         return "";
 
@@ -2856,10 +3032,10 @@ function getDateOnly(value) {
         "-" +
         String(
             date.getDate()
-        ).padStart(2, "0");
+        ).padStart(2, "0"
+        );
 
 }
-
 
 // ========================================================
 // HTML ESCAPE
@@ -2893,7 +3069,6 @@ function escapeHtml(value) {
 
 }
 
-
 // ========================================================
 // AUTO REFRESH
 // ========================================================
@@ -2901,7 +3076,7 @@ function escapeHtml(value) {
 setInterval(
     function () {
 
-        if (token) {
+        if (getToken()) {
 
             loadOrders();
 
