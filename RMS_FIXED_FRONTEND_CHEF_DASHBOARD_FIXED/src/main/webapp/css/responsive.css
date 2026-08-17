@@ -1,0 +1,33 @@
+@media(max-width:768px){
+
+.sidebar{
+
+width:70px;
+
+}
+
+.sidebar .logo h2{
+
+font-size:18px;
+
+}
+
+.sidebar ul li a{
+
+font-size:0;
+
+}
+
+.sidebar ul li i{
+
+font-size:20px;
+
+}
+
+.main-content{
+
+margin-left:70px;
+
+}
+
+}

@@ -1,0 +1,1993 @@
+/* =========================================================
+   SANKALP RMS - BILLING PAGE
+   Compatible with common.css / admin-sidebar layout
+========================================================= */
+
+.billing-page {
+    width: 100%;
+    min-width: 0;
+    background: #f7f7f8;
+}
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.billing-page .page-header {
+    padding: 24px 28px 10px;
+}
+
+.billing-page .page-title-area {
+    width: 100%;
+}
+
+.billing-page .page-title-area h1 {
+    margin: 0 0 8px;
+    font-size: 26px;
+    font-weight: 700;
+    color: #171717;
+}
+
+.billing-page .breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #777;
+}
+
+.billing-page .breadcrumb i {
+    font-size: 9px;
+    color: #aaa;
+}
+
+.billing-page .breadcrumb .active {
+    color: #d99400;
+    font-weight: 600;
+}
+
+/* =========================================================
+   PAGE BODY
+========================================================= */
+
+.billing-page .page-body {
+    width: 100%;
+    padding: 18px 28px 30px;
+}
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+.billing-page .summary-grid {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.billing-page .summary-card {
+    min-width: 0;
+    min-height: 120px;
+
+    background: #fff;
+
+    border: 1px solid #e9e9e9;
+    border-radius: 10px;
+
+    padding: 20px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 15px;
+
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.025);
+}
+
+.billing-page .summary-icon {
+    width: 55px;
+    height: 55px;
+
+    min-width: 55px;
+
+    border-radius: 11px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 23px;
+}
+
+.billing-page .summary-icon.orange {
+    background: #fff1d4;
+    color: #e59d00;
+}
+
+.billing-page .summary-icon.green {
+    background: #e4f7e9;
+    color: #24a148;
+}
+
+.billing-page .summary-icon.yellow {
+    background: #fff4d7;
+    color: #e3a000;
+}
+
+.billing-page .summary-icon.blue {
+    background: #e5f1ff;
+    color: #3186d5;
+}
+
+.billing-page .summary-card span {
+    display: block;
+    color: #777;
+    font-size: 12px;
+}
+
+.billing-page .summary-card h2 {
+    margin: 5px 0;
+
+    color: #171717;
+
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.billing-page .summary-card small {
+    display: block;
+
+    color: #999;
+
+    font-size: 11px;
+}
+
+/* =========================================================
+   MAIN BILLING GRID
+========================================================= */
+
+.billing-page .billing-grid {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(0, 1fr)
+        405px;
+
+    gap: 18px;
+
+    align-items: start;
+}
+
+.billing-page .left-section {
+    min-width: 0;
+}
+
+/* =========================================================
+   PANEL
+========================================================= */
+
+.billing-page .panel {
+    background: #fff;
+
+    border: 1px solid #e9e9e9;
+
+    border-radius: 10px;
+
+    box-shadow:
+        0 2px 8px rgba(0, 0, 0, 0.025);
+
+    min-width: 0;
+}
+
+/* =========================================================
+   PANEL HEADER
+========================================================= */
+
+.billing-page .panel-header {
+    min-height: 70px;
+
+    padding: 15px 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+.billing-page .panel-header h3 {
+    margin: 0;
+
+    font-size: 16px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+/* =========================================================
+   BILL FILTERS
+========================================================= */
+
+.billing-page .bill-filters {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+
+    min-width: 0;
+}
+
+.billing-page .table-search {
+    width: 245px;
+    height: 38px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 7px;
+
+    background: #fff;
+
+    display: flex;
+
+    align-items: center;
+
+    padding: 0 10px;
+}
+
+.billing-page .table-search i {
+    color: #777;
+
+    font-size: 12px;
+}
+
+.billing-page .table-search input {
+    width: 100%;
+
+    border: none;
+
+    outline: none;
+
+    padding-left: 8px;
+
+    font-size: 12px;
+
+    background: transparent;
+}
+
+.billing-page .bill-filters select {
+    height: 38px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 7px;
+
+    background: #fff;
+
+    padding: 0 10px;
+
+    font-size: 12px;
+
+    outline: none;
+
+    cursor: pointer;
+}
+
+.billing-page .bill-filters select:focus {
+    border-color: #d99400;
+}
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.billing-page .table-responsive {
+    width: 100%;
+
+    overflow-x: auto;
+}
+
+.billing-page .billing-table {
+    width: 100%;
+
+    min-width: 850px;
+
+    border-collapse: collapse;
+
+    font-size: 12px;
+}
+
+.billing-page .billing-table th {
+    background: #fafafa;
+
+    color: #444;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    padding: 13px 11px;
+
+    text-align: left;
+
+    white-space: nowrap;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+.billing-page .billing-table td {
+    padding: 13px 11px;
+
+    border-bottom: 1px solid #eeeeee;
+
+    color: #333;
+
+    white-space: nowrap;
+}
+
+.billing-page .billing-table tbody tr:hover {
+    background: #fffaf0;
+}
+
+.billing-page .loading-row,
+.billing-page .empty-row {
+    text-align: center !important;
+
+    padding: 38px !important;
+
+    color: #777;
+}
+
+/* =========================================================
+   PAYMENT BADGES
+========================================================= */
+
+.billing-page .payment-badge,
+.billing-page .status-badge {
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 60px;
+
+    padding: 5px 9px;
+
+    border-radius: 5px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+}
+
+.billing-page .payment-cash {
+    background: #e5f6e9;
+    color: #269345;
+}
+
+.billing-page .payment-upi {
+    background: #f0e8ff;
+    color: #7a45bb;
+}
+
+.billing-page .payment-card {
+    background: #e5f0ff;
+    color: #3777c7;
+}
+
+.billing-page .payment-other {
+    background: #f1f1f1;
+    color: #666;
+}
+
+.billing-page .status-paid {
+    background: #e3f6e8;
+    color: #259348;
+}
+
+.billing-page .status-pending {
+    background: #fff1dc;
+    color: #d89200;
+}
+
+.billing-page .status-cancelled {
+    background: #ffe6e6;
+    color: #dc4141;
+}
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.billing-page .action-btn {
+    width: 32px;
+    height: 32px;
+
+    border: 1px solid #ddd;
+
+    background: #fff;
+
+    border-radius: 6px;
+
+    cursor: pointer;
+
+    margin-right: 3px;
+
+    transition: 0.2s;
+}
+
+.billing-page .action-btn:hover {
+    background: #fff5db;
+
+    border-color: #e9a000;
+
+    color: #d99400;
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
+
+.billing-page .pagination-container {
+    min-height: 60px;
+
+    padding: 12px 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.billing-page .pagination-container > span {
+    color: #777;
+
+    font-size: 11px;
+}
+
+.billing-page .pagination {
+    display: flex;
+
+    align-items: center;
+
+    gap: 4px;
+}
+
+.billing-page .pagination button {
+    min-width: 34px;
+
+    height: 32px;
+
+    border: 1px solid #ddd;
+
+    background: #fff;
+
+    border-radius: 5px;
+
+    font-size: 11px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.billing-page .pagination button:hover:not(:disabled) {
+    border-color: #d99400;
+
+    color: #d99400;
+}
+
+.billing-page .pagination button.active {
+    background: #d99400;
+
+    border-color: #d99400;
+
+    color: #fff;
+}
+
+.billing-page .pagination button:disabled {
+    opacity: 0.45;
+
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   SUMMARY PANELS
+========================================================= */
+
+.billing-page .summary-panels {
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 18px;
+
+    margin-top: 18px;
+}
+
+.billing-page .chart-panel {
+    padding: 18px;
+
+    min-height: 235px;
+}
+
+.billing-page .chart-panel h3 {
+    margin: 0 0 20px;
+
+    font-size: 16px;
+}
+
+/* =========================================================
+   CHART CONTENT
+========================================================= */
+
+.billing-page .chart-content {
+    display: flex;
+
+    align-items: center;
+
+    gap: 25px;
+
+    min-height: 155px;
+}
+
+/* =========================================================
+   DONUT
+========================================================= */
+
+.billing-page .donut-chart {
+    width: 135px;
+    height: 135px;
+
+    min-width: 135px;
+
+    border-radius: 50%;
+
+    background:
+        conic-gradient(
+            #38a853 0deg 158deg,
+            #7b45c5 158deg 263deg,
+            #5289dc 263deg 339deg,
+            #f0ad00 339deg 360deg
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.billing-page .donut-inner {
+    width: 88px;
+    height: 88px;
+
+    border-radius: 50%;
+
+    background: #fff;
+
+    display: flex;
+
+    flex-direction: column;
+
+    align-items: center;
+
+    justify-content: center;
+}
+
+.billing-page .donut-inner strong {
+    font-size: 20px;
+
+    color: #222;
+}
+
+.billing-page .donut-inner span {
+    color: #777;
+
+    font-size: 10px;
+}
+
+.billing-page .status-chart {
+    background:
+        conic-gradient(
+            #38a853 0deg 337deg,
+            #f0ad00 337deg 360deg
+        );
+}
+
+/* =========================================================
+   LEGEND
+========================================================= */
+
+.billing-page .legend {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.billing-page .legend div {
+    display: flex;
+
+    align-items: center;
+
+    margin-bottom: 12px;
+
+    font-size: 12px;
+}
+
+.billing-page .legend strong {
+    margin-left: auto;
+
+    font-weight: 700;
+}
+
+.billing-page .dot {
+    width: 9px;
+    height: 9px;
+
+    min-width: 9px;
+
+    border-radius: 50%;
+
+    display: inline-block;
+
+    margin-right: 8px;
+}
+
+.billing-page .dot.cash {
+    background: #38a853;
+}
+
+.billing-page .dot.upi {
+    background: #7b45c5;
+}
+
+.billing-page .dot.card {
+    background: #5289dc;
+}
+
+.billing-page .dot.other {
+    background: #f0ad00;
+}
+
+.billing-page .dot.paid {
+    background: #38a853;
+}
+
+.billing-page .dot.pending {
+    background: #f0ad00;
+}
+
+.billing-page .dot.cancelled {
+    background: #e64a3b;
+}
+
+/* =========================================================
+   BILL GENERATOR
+========================================================= */
+
+.billing-page .bill-generator {
+    overflow: hidden;
+}
+
+.billing-page .generator-header {
+    min-height: 62px;
+
+    padding: 15px 17px;
+
+    border-bottom: 1px solid #eeeeee;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+.billing-page .generator-header h3 {
+    margin: 0;
+
+    font-size: 17px;
+}
+
+.billing-page .generator-header button {
+    width: 30px;
+    height: 30px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #777;
+
+    cursor: pointer;
+
+    border-radius: 5px;
+}
+
+.billing-page .generator-header button:hover {
+    background: #f4f4f4;
+}
+
+/* =========================================================
+   FORM SECTION
+========================================================= */
+
+.billing-page .form-section {
+    padding: 13px 17px 0;
+}
+
+.billing-page .form-section label {
+    display: block;
+
+    margin-bottom: 7px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    color: #222;
+}
+
+.billing-page .form-section label span {
+    color: #e33;
+}
+
+.billing-page .form-section input,
+.billing-page .form-section select,
+.billing-page .form-section textarea {
+    width: 100%;
+
+    border: 1px solid #ddd;
+
+    border-radius: 7px;
+
+    padding: 10px 11px;
+
+    outline: none;
+
+    font-size: 12px;
+
+    background: #fff;
+
+    transition: 0.2s;
+}
+
+.billing-page .form-section input:focus,
+.billing-page .form-section select:focus,
+.billing-page .form-section textarea:focus {
+    border-color: #d99400;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(217, 148, 0, 0.08);
+}
+
+/* =========================================================
+   ORDER SELECT
+========================================================= */
+
+.billing-page .order-select {
+    display: flex;
+
+    gap: 7px;
+}
+
+.billing-page .order-select select {
+    flex: 1;
+
+    min-width: 0;
+}
+
+.billing-page .order-select button {
+    width: 42px;
+    min-width: 42px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    background: #efa500;
+
+    color: #fff;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.billing-page .order-select button:hover {
+    background: #d99500;
+}
+
+/* =========================================================
+   CUSTOMER INFORMATION
+========================================================= */
+
+.billing-page .customer-info {
+    margin: 14px 17px 0;
+
+    padding: 13px;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 7px;
+
+    display: grid;
+
+    grid-template-columns: 1fr 1fr;
+
+    gap: 14px;
+}
+
+.billing-page .customer-info label {
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #777;
+
+    font-size: 10px;
+}
+
+.billing-page .customer-info strong {
+    font-size: 11px;
+
+    color: #222;
+}
+
+.billing-page .status-badge.new {
+    background: #fff0c9;
+
+    color: #d79500;
+}
+
+/* =========================================================
+   ORDER ITEMS
+========================================================= */
+
+.billing-page .order-items {
+    margin: 14px 17px 0;
+
+    border: 1px solid #eeeeee;
+
+    border-radius: 7px;
+
+    overflow: hidden;
+}
+
+.billing-page .order-items h4 {
+    margin: 0;
+
+    padding: 11px;
+
+    font-size: 12px;
+
+    border-bottom: 1px solid #eeeeee;
+}
+
+.billing-page .order-items table {
+    width: 100%;
+
+    border-collapse: collapse;
+
+    font-size: 10px;
+}
+
+.billing-page .order-items th {
+    background: #fafafa;
+
+    padding: 9px;
+
+    text-align: left;
+
+    font-weight: 700;
+}
+
+.billing-page .order-items td {
+    padding: 9px;
+
+    border-top: 1px solid #eeeeee;
+}
+
+.billing-page .empty-items {
+    text-align: center;
+
+    color: #888;
+
+    padding: 20px !important;
+}
+
+/* =========================================================
+   TOTALS
+========================================================= */
+
+.billing-page .bill-totals {
+    margin: 13px 17px 0;
+}
+
+.billing-page .bill-totals > div {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    padding: 5px 0;
+
+    font-size: 12px;
+}
+
+.billing-page .bill-totals strong {
+    font-weight: 700;
+}
+
+.billing-page .grand-total {
+    margin-top: 5px;
+
+    padding-top: 12px !important;
+
+    border-top: 1px solid #ddd;
+
+    font-size: 16px !important;
+}
+
+.billing-page .grand-total strong {
+    color: #eaa000;
+
+    font-size: 19px;
+}
+
+/* =========================================================
+   PAYMENT BUTTONS
+========================================================= */
+
+.billing-page .payment-buttons {
+    display: grid;
+
+    grid-template-columns: repeat(3, 1fr);
+
+    gap: 8px;
+}
+
+.billing-page .payment-btn {
+    height: 39px;
+
+    border: 1px solid #ddd;
+
+    border-radius: 6px;
+
+    background: #fff;
+
+    font-size: 11px;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.billing-page .payment-btn i {
+    margin-right: 5px;
+}
+
+.billing-page .payment-btn:hover {
+    border-color: #d99400;
+}
+
+.billing-page .payment-btn.active {
+    background: #efa500;
+
+    border-color: #efa500;
+
+    color: #fff;
+}
+
+/* =========================================================
+   PAYMENT STATUS
+========================================================= */
+
+.billing-page .payment-status {
+    display: flex;
+
+    gap: 8px;
+}
+
+.billing-page .payment-status-btn {
+    padding: 9px 25px;
+
+    border: 1px solid #ddd;
+
+    background: #fff;
+
+    border-radius: 6px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+}
+
+.billing-page .payment-status-btn.active {
+    background: #2da44e;
+
+    border-color: #2da44e;
+
+    color: #fff;
+}
+
+/* =========================================================
+   GENERATOR ACTIONS
+========================================================= */
+
+.billing-page .generator-actions {
+    padding: 17px;
+
+    display: grid;
+
+    grid-template-columns:
+        .8fr
+        1.3fr
+        1fr;
+
+    gap: 8px;
+}
+
+.billing-page .generator-actions button {
+    height: 42px;
+
+    border-radius: 7px;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition: 0.2s;
+}
+
+.billing-page .btn-cancel {
+    border: none;
+
+    background: #eeeeee;
+}
+
+.billing-page .btn-generate {
+    border: none;
+
+    background: #efa500;
+
+    color: #fff;
+}
+
+.billing-page .btn-print {
+    border: 1px solid #ddd;
+
+    background: #fff;
+}
+
+.billing-page .btn-generate:hover {
+    background: #d99500;
+}
+
+.billing-page .btn-cancel:hover {
+    background: #e2e2e2;
+}
+
+.billing-page .btn-print:hover {
+    background: #f7f7f7;
+}
+
+/* =========================================================
+   COLLAPSED GENERATOR
+========================================================= */
+
+.billing-page .bill-generator.collapsed .generator-content {
+    display: none;
+}
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.billing-page + .toast-message,
+.toast-message {
+    position: fixed;
+
+    right: 25px;
+    bottom: 25px;
+
+    z-index: 5000;
+
+    background: #242424;
+
+    color: #fff;
+
+    padding: 13px 18px;
+
+    border-radius: 7px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 12px;
+
+    opacity: 0;
+
+    transform: translateY(20px);
+
+    pointer-events: none;
+
+    transition: 0.3s;
+}
+
+.toast-message.show {
+    opacity: 1;
+
+    transform: translateY(0);
+}
+
+.toast-message i {
+    color: #4ac569;
+}
+
+/* =========================================================
+   LOADING
+========================================================= */
+
+.billing-page .loading-row i {
+    margin-right: 7px;
+
+    color: #d99400;
+}
+
+/* =========================================================
+   SANKALP RMS - BILL DETAILS MODAL
+========================================================= */
+
+.bill-modal-overlay {
+    position: fixed;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 20px;
+
+    background: rgba(0, 0, 0, 0.58);
+
+    z-index: 99999;
+
+    opacity: 0;
+    visibility: hidden;
+
+    pointer-events: none;
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease;
+}
+
+
+/* =========================================================
+   SHOW MODAL
+========================================================= */
+
+.bill-modal-overlay.show {
+    opacity: 1;
+
+    visibility: visible;
+
+    pointer-events: auto;
+}
+
+
+/* =========================================================
+   MODAL CONTAINER
+========================================================= */
+
+.bill-modal-overlay .bill-modal {
+
+    width: min(620px, 100%);
+
+    max-height: 90vh;
+
+    overflow-y: auto;
+
+    background: #ffffff;
+
+    border: 1px solid #e6e6e6;
+
+    border-radius: 18px;
+
+    box-shadow:
+        0 25px 80px rgba(0, 0, 0, 0.30);
+
+    transform:
+        translateY(25px)
+        scale(0.97);
+
+    transition:
+        transform 0.25s ease;
+
+    scrollbar-width: thin;
+}
+
+
+/* =========================================================
+   MODAL OPEN ANIMATION
+========================================================= */
+
+.bill-modal-overlay.show .bill-modal {
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+
+/* =========================================================
+   MODAL SCROLLBAR
+========================================================= */
+
+.bill-modal-overlay .bill-modal::-webkit-scrollbar {
+    width: 6px;
+}
+
+.bill-modal-overlay .bill-modal::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.bill-modal-overlay .bill-modal::-webkit-scrollbar-thumb {
+    background: #d8d8d8;
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+.bill-modal-overlay .bill-modal-header {
+
+    min-height: 78px;
+
+    padding: 18px 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    border-bottom:
+        1px solid #eeeeee;
+}
+
+
+/* =========================================================
+   TITLE AREA
+========================================================= */
+
+.bill-modal-overlay .bill-modal-header h2 {
+
+    margin: 0 0 4px;
+
+    font-size: 21px;
+
+    line-height: 1.2;
+
+    font-weight: 700;
+
+    color: #202020;
+}
+
+.bill-modal-overlay .bill-modal-header h2 i {
+
+    margin-right: 7px;
+
+    color: #e59d00;
+}
+
+.bill-modal-overlay .bill-modal-header span {
+
+    display: block;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    color: #d99400;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+.bill-modal-overlay .bill-modal-close {
+
+    width: 38px;
+    height: 38px;
+
+    min-width: 38px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: #f5f5f5;
+
+    color: #555;
+
+    cursor: pointer;
+
+    font-size: 16px;
+
+    transition:
+        background 0.2s ease,
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.bill-modal-overlay .bill-modal-close:hover {
+
+    background: #fff1d4;
+
+    color: #d99400;
+
+    transform: rotate(90deg);
+}
+
+
+/* =========================================================
+   MODAL BODY
+========================================================= */
+
+.bill-modal-overlay .bill-modal-body {
+
+    padding: 22px;
+}
+
+
+/* =========================================================
+   BILL INFORMATION GRID
+========================================================= */
+
+.bill-modal-overlay .bill-modal-info-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 12px;
+
+    margin-bottom: 20px;
+}
+
+
+/* =========================================================
+   INFORMATION CARD
+========================================================= */
+
+.bill-modal-overlay .bill-info-card {
+
+    min-width: 0;
+
+    padding: 14px 15px;
+
+    border:
+        1px solid #e9e9e9;
+
+    border-radius: 12px;
+
+    background: #fafafa;
+}
+
+.bill-modal-overlay .bill-info-card span {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #777;
+
+    font-size: 11px;
+
+    font-weight: 500;
+}
+
+.bill-modal-overlay .bill-info-card strong {
+
+    display: block;
+
+    color: #222;
+
+    font-size: 14px;
+
+    font-weight: 700;
+
+    overflow-wrap: anywhere;
+}
+
+
+/* =========================================================
+   BILL SUMMARY SECTION
+========================================================= */
+
+.bill-modal-overlay .bill-modal-section {
+
+    padding: 17px;
+
+    border:
+        1px solid #e8e8e8;
+
+    border-radius: 13px;
+
+    background: #fff;
+}
+
+
+/* =========================================================
+   SUMMARY TITLE
+========================================================= */
+
+.bill-modal-overlay .bill-modal-section h3 {
+
+    margin: 0 0 14px;
+
+    font-size: 15px;
+
+    font-weight: 700;
+
+    color: #292929;
+}
+
+.bill-modal-overlay .bill-modal-section h3 i {
+
+    margin-right: 7px;
+
+    color: #e49b00;
+}
+
+
+/* =========================================================
+   SUMMARY ROW
+========================================================= */
+
+.bill-modal-overlay .bill-summary-row {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    padding: 8px 0;
+
+    font-size: 13px;
+}
+
+.bill-modal-overlay .bill-summary-row span {
+
+    color: #666;
+}
+
+.bill-modal-overlay .bill-summary-row strong {
+
+    color: #222;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   DIVIDER
+========================================================= */
+
+.bill-modal-overlay .bill-summary-divider {
+
+    height: 1px;
+
+    margin: 8px 0;
+
+    background: #eeeeee;
+}
+
+
+/* =========================================================
+   GRAND TOTAL
+========================================================= */
+
+.bill-modal-overlay .bill-summary-row.grand {
+
+    padding-top: 13px;
+
+    margin-top: 2px;
+}
+
+.bill-modal-overlay .bill-summary-row.grand span {
+
+    color: #222;
+
+    font-size: 16px;
+
+    font-weight: 700;
+}
+
+.bill-modal-overlay .bill-summary-row.grand strong {
+
+    color: #e39a00;
+
+    font-size: 22px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   PAYMENT BOX
+========================================================= */
+
+.bill-modal-overlay .bill-payment-box {
+
+    margin-top: 17px;
+
+    padding: 15px 16px;
+
+    display: grid;
+
+    grid-template-columns:
+        1fr 1fr;
+
+    gap: 15px;
+
+    border:
+        1px solid #f0dfb4;
+
+    border-radius: 12px;
+
+    background: #fff9ec;
+}
+
+.bill-modal-overlay .bill-payment-box > div {
+
+    min-width: 0;
+}
+
+.bill-modal-overlay .bill-payment-box > div + div {
+
+    padding-left: 15px;
+
+    border-left:
+        1px solid #eadfca;
+}
+
+.bill-modal-overlay .bill-payment-box span {
+
+    display: block;
+
+    margin-bottom: 4px;
+
+    color: #777;
+
+    font-size: 11px;
+}
+
+.bill-modal-overlay .bill-payment-box strong {
+
+    display: block;
+
+    color: #222;
+
+    font-size: 14px;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   PAYMENT STATUS
+========================================================= */
+
+.bill-modal-overlay .modal-status {
+
+    display: inline-flex !important;
+
+    align-items: center;
+
+    justify-content: center;
+
+    width: fit-content;
+
+    min-width: 60px;
+
+    padding: 5px 11px;
+
+    border-radius: 20px;
+
+    font-size: 11px !important;
+
+    font-weight: 700 !important;
+
+    line-height: 1.2;
+}
+
+
+/* PAID */
+
+.bill-modal-overlay .modal-status.paid {
+
+    color: #16833b;
+
+    background: #e7f7eb;
+}
+
+
+/* PENDING */
+
+.bill-modal-overlay .modal-status.pending {
+
+    color: #a06a00;
+
+    background: #fff2d2;
+}
+
+
+/* CANCELLED */
+
+.bill-modal-overlay .modal-status.cancelled {
+
+    color: #c0392b;
+
+    background: #fdeaea;
+}
+
+
+/* =========================================================
+   MODAL FOOTER
+========================================================= */
+
+.bill-modal-overlay .bill-modal-footer {
+
+    min-height: 70px;
+
+    padding: 15px 22px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 9px;
+
+    border-top:
+        1px solid #eeeeee;
+}
+
+
+/* =========================================================
+   MODAL BUTTON
+========================================================= */
+
+.bill-modal-overlay .modal-btn {
+
+    min-height: 40px;
+
+    padding: 0 17px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    border-radius: 8px;
+
+    font-size: 12px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+.bill-modal-overlay .modal-btn.secondary {
+
+    border:
+        1px solid #dddddd;
+
+    background: #f3f3f3;
+
+    color: #333;
+}
+
+.bill-modal-overlay .modal-btn.secondary:hover {
+
+    background: #e7e7e7;
+
+    border-color: #d5d5d5;
+}
+
+
+/* =========================================================
+   PRINT BUTTON
+========================================================= */
+
+.bill-modal-overlay .modal-btn.primary {
+
+    border:
+        1px solid #e8a000;
+
+    background: #e8a000;
+
+    color: #fff;
+}
+
+.bill-modal-overlay .modal-btn.primary:hover {
+
+    background: #d59100;
+
+    border-color: #d59100;
+
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   RESPONSIVE - TABLET
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .bill-modal-overlay {
+
+        padding: 12px;
+    }
+
+    .bill-modal-overlay .bill-modal {
+
+        width: 100%;
+
+        max-height: 92vh;
+
+        border-radius: 14px;
+    }
+
+    .bill-modal-overlay .bill-modal-header {
+
+        padding:
+            16px 18px;
+    }
+
+    .bill-modal-overlay .bill-modal-body {
+
+        padding:
+            18px;
+    }
+
+    .bill-modal-overlay .bill-modal-footer {
+
+        padding:
+            14px 18px;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVE - MOBILE
+========================================================= */
+
+@media (max-width: 520px) {
+
+    .bill-modal-overlay {
+
+        padding: 8px;
+    }
+
+    .bill-modal-overlay .bill-modal {
+
+        max-height: 95vh;
+
+        border-radius: 12px;
+    }
+
+    .bill-modal-overlay .bill-modal-header h2 {
+
+        font-size: 18px;
+    }
+
+    .bill-modal-overlay .bill-modal-info-grid {
+
+        grid-template-columns: 1fr;
+    }
+
+    .bill-modal-overlay .bill-payment-box {
+
+        grid-template-columns: 1fr;
+
+        gap: 10px;
+    }
+
+    .bill-modal-overlay .bill-payment-box > div + div {
+
+        padding-left: 0;
+
+        padding-top: 10px;
+
+        border-left: none;
+
+        border-top:
+            1px solid #eadfca;
+    }
+
+    .bill-modal-overlay .bill-modal-footer {
+
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .bill-modal-overlay .modal-btn {
+
+        width: 100%;
+    }
+}
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1400px) {
+
+    .billing-page .billing-grid {
+        grid-template-columns:
+            minmax(0, 1fr)
+            370px;
+    }
+
+    .billing-page .table-search {
+        width: 200px;
+    }
+
+}
+
+@media (max-width: 1200px) {
+
+    .billing-page .summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .billing-page .billing-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .billing-page .bill-generator {
+        width: 100%;
+    }
+
+}
+
+@media (max-width: 900px) {
+
+    .billing-page .panel-header {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .billing-page .bill-filters {
+        width: 100%;
+
+        justify-content: flex-start;
+
+        flex-wrap: wrap;
+    }
+
+}
+
+@media (max-width: 768px) {
+
+    .billing-page .page-header {
+        padding: 18px 15px 8px;
+    }
+
+    .billing-page .page-body {
+        padding: 15px;
+    }
+
+    .billing-page .summary-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .billing-page .summary-panels {
+        grid-template-columns: 1fr;
+    }
+
+    .billing-page .chart-content {
+        justify-content: center;
+    }
+
+}
+
+@media (max-width: 500px) {
+
+    .billing-page .bill-filters {
+        flex-direction: column;
+
+        align-items: stretch;
+    }
+
+    .billing-page .table-search {
+        width: 100%;
+    }
+
+    .billing-page .bill-filters select {
+        width: 100%;
+    }
+
+    .billing-page .customer-info {
+        grid-template-columns: 1fr;
+    }
+
+    .billing-page .payment-buttons {
+        grid-template-columns: 1fr;
+    }
+
+    .billing-page .payment-status {
+        flex-direction: column;
+    }
+
+    .billing-page .generator-actions {
+        grid-template-columns: 1fr;
+    }
+
+}

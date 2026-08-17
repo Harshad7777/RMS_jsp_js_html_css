@@ -1,0 +1,1100 @@
+/* =========================================================
+   SANKALP RMS - TABLE MANAGEMENT
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    background: #f5f6f8;
+}
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.table-page {
+    padding: 32px;
+    min-height: calc(100vh - 80px);
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.table-page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 24px;
+}
+
+.table-title-area h1 {
+    margin: 0;
+    font-size: 30px;
+    font-weight: 700;
+    color: #172033;
+}
+
+.table-breadcrumb {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    margin-top: 8px;
+    color: #8a919b;
+    font-size: 14px;
+}
+
+.table-breadcrumb i {
+    font-size: 10px;
+}
+
+.table-breadcrumb .active {
+    color: #dfa000;
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   ADD BUTTON
+========================================================= */
+
+.btn-add-table {
+    padding: 14px 21px;
+    border: none;
+    border-radius: 9px;
+
+    background: #dfa000;
+    color: #ffffff;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+
+    transition: .2s;
+    box-shadow: 0 6px 18px rgba(223, 160, 0, .18);
+}
+
+.btn-add-table:hover {
+    background: #c98e00;
+    transform: translateY(-1px);
+}
+
+
+/* =========================================================
+   STATS
+========================================================= */
+
+.table-stats {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+
+    margin-bottom: 20px;
+}
+
+.table-stat-card {
+    min-height: 105px;
+
+    background: #ffffff;
+
+    border: 1px solid #e7e9ed;
+    border-radius: 11px;
+
+    padding: 19px;
+
+    display: flex;
+    align-items: center;
+
+    gap: 14px;
+}
+
+.table-stat-icon {
+    width: 52px;
+    height: 52px;
+
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 20px;
+}
+
+.table-stat-icon.total {
+    background: #fff0d6;
+    color: #d79a00;
+}
+
+.table-stat-icon.available {
+    background: #e3f6e9;
+    color: #26974c;
+}
+
+.table-stat-icon.occupied {
+    background: #ffeadc;
+    color: #e77a23;
+}
+
+.table-stat-icon.reserved {
+    background: #e8edff;
+    color: #526ec7;
+}
+
+.table-stat-card span {
+    display: block;
+    color: #757d88;
+    font-size: 12px;
+    margin-bottom: 4px;
+}
+
+.table-stat-card strong {
+    color: #1f2733;
+    font-size: 25px;
+}
+
+
+/* =========================================================
+   MAIN CARD
+========================================================= */
+
+.table-main-card {
+    background: #ffffff;
+
+    border: 1px solid #e7e9ed;
+    border-radius: 12px;
+
+    box-shadow:
+        0 2px 10px rgba(0, 0, 0, .03);
+
+    overflow: hidden;
+}
+
+
+/* =========================================================
+   TOOLBAR
+========================================================= */
+
+.table-toolbar {
+    padding: 20px;
+
+    display: grid;
+
+    grid-template-columns:
+        minmax(250px, 1fr)
+        190px
+        auto;
+
+    gap: 12px;
+
+    border-bottom:
+        1px solid #eceef1;
+}
+
+.table-search-box,
+.table-filter-box {
+    position: relative;
+}
+
+.table-search-box i {
+    position: absolute;
+
+    left: 16px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    color: #777f89;
+
+    pointer-events: none;
+}
+
+.table-search-box input,
+.table-filter-box select {
+    width: 100%;
+    height: 47px;
+
+    border:
+        1px solid #dfe2e6;
+
+    border-radius: 8px;
+
+    background: #ffffff;
+
+    outline: none;
+
+    color: #303743;
+
+    font-size: 14px;
+}
+
+.table-search-box input {
+    padding:
+        0 15px 0 44px;
+}
+
+.table-filter-box select {
+    appearance: none;
+
+    padding:
+        0 38px 0 14px;
+
+    cursor: pointer;
+}
+
+.table-filter-box > i {
+    position: absolute;
+
+    right: 14px;
+    top: 50%;
+
+    transform: translateY(-50%);
+
+    pointer-events: none;
+
+    color: #737b85;
+    font-size: 10px;
+}
+
+.table-search-box input:focus,
+.table-filter-box select:focus {
+    border-color: #dfa000;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(223,160,0,.08);
+}
+
+
+/* =========================================================
+   REFRESH
+========================================================= */
+
+.btn-refresh-tables {
+    height: 47px;
+
+    padding: 0 18px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+
+    background: #ffffff;
+
+    border:
+        1px solid #dfe2e6;
+
+    border-radius: 8px;
+
+    color: #424b56;
+
+    cursor: pointer;
+
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.btn-refresh-tables:hover {
+    color: #c68d00;
+    border-color: #dfa000;
+    background: #fffdf8;
+}
+
+
+/* =========================================================
+   DATA TABLE
+========================================================= */
+
+.table-data-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.restaurant-table {
+    width: 100%;
+    min-width: 760px;
+
+    border-collapse: collapse;
+}
+
+.restaurant-table th {
+    padding: 16px 14px;
+
+    background: #fafafa;
+
+    border-bottom:
+        1px solid #e8eaed;
+
+    text-align: left;
+
+    color: #252c37;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+.restaurant-table td {
+    padding: 14px;
+
+    border-bottom:
+        1px solid #eef0f2;
+
+    color: #424b56;
+
+    font-size: 13px;
+
+    vertical-align: middle;
+}
+
+.restaurant-table tbody tr:hover {
+    background: #fffdf8;
+}
+
+
+/* =========================================================
+   TABLE NUMBER
+========================================================= */
+
+.table-number-cell {
+    display: flex;
+    align-items: center;
+
+    gap: 10px;
+}
+
+.table-number-icon {
+    width: 38px;
+    height: 38px;
+
+    border-radius: 8px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: #fff1d8;
+    color: #d79900;
+
+    font-size: 16px;
+}
+
+.table-number-cell strong {
+    color: #202732;
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   CAPACITY
+========================================================= */
+
+.capacity-cell {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+
+    color: #4d5662;
+}
+
+.capacity-cell i {
+    color: #8a919b;
+}
+
+
+/* =========================================================
+   LOCATION
+========================================================= */
+
+.location-cell {
+    color: #69717c;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.table-status {
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    min-width: 90px;
+
+    padding: 6px 11px;
+
+    border-radius: 18px;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    text-transform: uppercase;
+}
+
+.table-status.available {
+    background: #e5f6eb;
+    color: #24924a;
+}
+
+.table-status.occupied {
+    background: #fff0df;
+    color: #e67c22;
+}
+
+.table-status.reserved {
+    background: #e8edff;
+    color: #526dc5;
+}
+
+.table-status.maintenance {
+    background: #fff3d7;
+    color: #b88700;
+}
+
+.table-status.inactive {
+    background: #ffe5e5;
+    color: #d93632;
+}
+
+
+/* =========================================================
+   ACTIONS
+========================================================= */
+
+.table-actions {
+    display: flex;
+    gap: 7px;
+}
+
+.table-action-btn {
+    width: 36px;
+    height: 36px;
+
+    border: none;
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.table-edit-btn {
+    background: #fff2d5;
+    color: #d59800;
+}
+
+.table-edit-btn:hover {
+    background: #ffe5af;
+}
+
+.table-delete-btn {
+    background: #ffe4e3;
+    color: #dd3733;
+}
+
+.table-delete-btn:hover {
+    background: #ffd1cf;
+}
+
+
+/* =========================================================
+   LOADING / EMPTY
+========================================================= */
+
+.table-loading,
+.table-empty {
+    text-align: center !important;
+
+    padding: 55px !important;
+
+    color: #8a929c !important;
+}
+
+.table-loading i,
+.table-empty i {
+    margin-right: 6px;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.table-data-footer {
+    padding: 16px 20px;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    gap: 15px;
+}
+
+.table-showing-text {
+    color: #777f89;
+    font-size: 12px;
+}
+
+.table-pagination {
+    display: flex;
+}
+
+.table-pagination button {
+    min-width: 42px;
+    height: 37px;
+
+    border:
+        1px solid #e0e3e7;
+
+    background:
+        #ffffff;
+
+    color:
+        #555d68;
+
+    cursor:
+        pointer;
+
+    font-size:
+        12px;
+}
+
+.table-pagination button:first-child {
+    border-radius: 7px 0 0 7px;
+}
+
+.table-pagination button:last-child {
+    border-radius: 0 7px 7px 0;
+}
+
+.table-pagination button:hover:not(:disabled) {
+    background: #fff7e3;
+    color: #d89900;
+}
+
+.table-pagination button.active {
+    background: #dfa000;
+    color: white;
+    border-color: #dfa000;
+}
+
+.table-pagination button:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   PAGE FOOTER
+========================================================= */
+
+.table-footer {
+    display: flex;
+    justify-content: space-between;
+
+    padding:
+        25px 5px 10px;
+
+    color: #8a919b;
+    font-size: 12px;
+}
+
+.table-footer strong {
+    color: #202631;
+}
+
+
+/* =========================================================
+   ADD / EDIT PANEL
+========================================================= */
+
+.table-panel-overlay {
+    position: fixed;
+    inset: 0;
+
+    background:
+        rgba(22,26,32,.48);
+
+    display: none;
+
+    justify-content: flex-end;
+
+    z-index: 10000;
+}
+
+.table-panel-overlay.active {
+    display: flex;
+}
+
+.table-form-panel {
+    width: 420px;
+    max-width: 100%;
+
+    height: 100vh;
+
+    overflow-y: auto;
+
+    background: #ffffff;
+
+    box-shadow:
+        -10px 0 40px
+        rgba(0,0,0,.12);
+
+    animation:
+        tablePanelSlide .25s ease;
+}
+
+@keyframes tablePanelSlide {
+
+    from {
+        transform: translateX(100%);
+    }
+
+    to {
+        transform: translateX(0);
+    }
+
+}
+
+
+/* =========================================================
+   FORM HEADER
+========================================================= */
+
+.table-form-header {
+    position: sticky;
+    top: 0;
+
+    z-index: 5;
+
+    background: #ffffff;
+
+    padding:
+        20px 22px;
+
+    border-bottom:
+        1px solid #eceef1;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.table-form-header h2 {
+    margin: 0;
+
+    font-size: 20px;
+
+    color: #18202c;
+}
+
+.table-form-header button {
+    width: 35px;
+    height: 35px;
+
+    border: none;
+
+    background: transparent;
+
+    color: #858c95;
+
+    cursor: pointer;
+
+    font-size: 19px;
+}
+
+.table-form-header button:hover {
+    color: #d99a00;
+}
+
+
+/* =========================================================
+   FORM
+========================================================= */
+
+#tableForm {
+    padding: 22px;
+}
+
+.table-form-group {
+    margin-bottom: 18px;
+}
+
+.table-form-group label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #252d38;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.table-form-group label span {
+    color: #df3935;
+}
+
+.table-form-group input,
+.table-select-wrapper select {
+    width: 100%;
+
+    height: 45px;
+
+    border:
+        1px solid #dfe2e6;
+
+    border-radius: 8px;
+
+    padding:
+        0 13px;
+
+    color: #343c47;
+
+    background: #ffffff;
+
+    outline: none;
+
+    font-size: 13px;
+}
+
+.table-form-group input:focus,
+.table-select-wrapper select:focus {
+    border-color: #dfa000;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(223,160,0,.08);
+}
+
+
+/* =========================================================
+   SELECT
+========================================================= */
+
+.table-select-wrapper {
+    position: relative;
+}
+
+.table-select-wrapper select {
+    appearance: none;
+
+    padding-right: 40px;
+
+    cursor: pointer;
+}
+
+.table-select-wrapper > i {
+    position: absolute;
+
+    right: 14px;
+    top: 50%;
+
+    transform:
+        translateY(-50%);
+
+    font-size: 10px;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   FORM ACTIONS
+========================================================= */
+
+.table-form-actions {
+    display: flex;
+
+    justify-content: flex-end;
+
+    gap: 10px;
+
+    margin-top: 25px;
+}
+
+.btn-table-cancel,
+.btn-table-save {
+    min-height: 44px;
+
+    padding:
+        0 19px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    cursor: pointer;
+
+    font-size: 13px;
+
+    font-weight: 600;
+}
+
+.btn-table-cancel {
+    background: #e9eaec;
+    color: #424952;
+}
+
+.btn-table-save {
+    background: #dfa000;
+    color: white;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 7px;
+}
+
+.btn-table-save:hover {
+    background: #c98e00;
+}
+
+.btn-table-save:disabled {
+    opacity: .6;
+    cursor: not-allowed;
+}
+
+
+/* =========================================================
+   DELETE MODAL
+========================================================= */
+
+.table-delete-overlay {
+    position: fixed;
+    inset: 0;
+
+    background:
+        rgba(20,24,30,.55);
+
+    display: none;
+
+    align-items: center;
+    justify-content: center;
+
+    z-index: 11000;
+}
+
+.table-delete-overlay.active {
+    display: flex;
+}
+
+.table-delete-modal {
+    width: 390px;
+    max-width:
+        calc(100% - 30px);
+
+    background: #ffffff;
+
+    border-radius: 12px;
+
+    padding: 30px;
+
+    text-align: center;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.20);
+}
+
+.table-delete-icon {
+    width: 64px;
+    height: 64px;
+
+    margin:
+        0 auto 16px;
+
+    border-radius: 50%;
+
+    background: #ffe5e4;
+
+    color: #df3834;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 22px;
+}
+
+.table-delete-modal h3 {
+    margin: 0 0 9px;
+
+    font-size: 20px;
+}
+
+.table-delete-modal p {
+    color: #737b85;
+
+    font-size: 13px;
+
+    line-height: 1.6;
+}
+
+.table-delete-actions {
+    display: flex;
+
+    justify-content: center;
+
+    gap: 10px;
+
+    margin-top: 22px;
+}
+
+.table-delete-actions button {
+    min-height: 40px;
+
+    padding:
+        0 18px;
+
+    border: none;
+
+    border-radius: 7px;
+
+    cursor: pointer;
+
+    font-weight: 600;
+}
+
+#cancelTableDelete {
+    background: #e9eaec;
+    color: #424952;
+}
+
+#confirmTableDelete {
+    background: #df3834;
+    color: white;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.table-toast {
+    position: fixed;
+
+    right: 25px;
+    bottom: 25px;
+
+    min-width: 250px;
+
+    padding:
+        13px 18px;
+
+    border-radius: 8px;
+
+    background: #202631;
+    color: #ffffff;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+
+    transform:
+        translateY(100px);
+
+    opacity: 0;
+
+    pointer-events: none;
+
+    transition: .3s;
+
+    z-index: 20000;
+}
+
+.table-toast.show {
+    transform:
+        translateY(0);
+
+    opacity: 1;
+}
+
+.table-toast.success i {
+    color: #3cc274;
+}
+
+.table-toast.error i {
+    color: #ff5d5d;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1200px) {
+
+    .table-stats {
+        grid-template-columns:
+            repeat(2, 1fr);
+    }
+
+}
+
+@media (max-width: 900px) {
+
+    .table-page {
+        padding: 20px;
+    }
+
+    .table-toolbar {
+        grid-template-columns:
+            1fr;
+    }
+
+}
+
+@media (max-width: 650px) {
+
+    .table-page-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .btn-add-table {
+        width: 100%;
+    }
+
+    .table-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .table-data-footer {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .table-footer {
+        flex-direction: column;
+        gap: 8px;
+    }
+
+    .table-form-panel {
+        width: 100%;
+    }
+
+}

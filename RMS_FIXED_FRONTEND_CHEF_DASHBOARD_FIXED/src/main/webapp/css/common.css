@@ -1,0 +1,1587 @@
+/* =========================================================
+   SANKALP RESTAURANT MANAGEMENT SYSTEM
+   COMMON ADMIN LAYOUT
+   FIXED SIDEBAR + HEADER + LIVE TIME
+========================================================= */
+
+
+/* =========================================================
+   ROOT VARIABLES
+========================================================= */
+
+:root {
+
+    --sidebar-width: 240px;
+
+    --header-height: 76px;
+
+    --gold: #e5a000;
+    --gold-dark: #c98900;
+
+    --sidebar-bg: #111111;
+    --sidebar-bg-light: #171717;
+
+    --body-bg: #f6f7f9;
+
+    --white: #ffffff;
+
+    --text: #222222;
+    --muted: #888888;
+
+    --border: #e5e5e5;
+}
+
+
+/* =========================================================
+   RESET
+========================================================= */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+
+html,
+body {
+    width: 100%;
+    min-height: 100%;
+}
+
+
+body {
+
+    font-family:
+        "Segoe UI",
+        Arial,
+        Helvetica,
+        sans-serif;
+
+    background:
+        var(--body-bg);
+
+    color:
+        var(--text);
+
+    font-size:
+        14px;
+
+    overflow-x:
+        hidden;
+}
+
+
+button,
+input,
+select,
+textarea {
+    font-family: inherit;
+}
+
+
+button {
+    cursor: pointer;
+}
+
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.admin-sidebar {
+
+    position: fixed;
+
+    top: 0;
+    left: 0;
+
+    width:
+        var(--sidebar-width);
+
+    height:
+        100vh;
+
+    background:
+        linear-gradient(
+            180deg,
+            var(--sidebar-bg) 0%,
+            var(--sidebar-bg-light) 100%
+        );
+
+    color:
+        #ffffff;
+
+    z-index:
+        2000;
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    overflow-x:
+        hidden;
+
+    overflow-y:
+        auto;
+
+    box-shadow:
+        2px 0 10px
+        rgba(0,0,0,.15);
+
+    transition:
+        transform .3s ease,
+        width .3s ease;
+}
+
+
+/* =========================================================
+   SIDEBAR SCROLLBAR
+========================================================= */
+
+.admin-sidebar::-webkit-scrollbar {
+    width: 4px;
+}
+
+
+.admin-sidebar::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+
+.admin-sidebar::-webkit-scrollbar-thumb {
+
+    background:
+        #444;
+
+    border-radius:
+        10px;
+}
+
+
+/* =========================================================
+   SIDEBAR LOGO
+========================================================= */
+
+.sidebar-logo {
+
+    width: 100%;
+
+    height: 130px;
+
+    padding:
+        15px 18px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    flex-shrink: 0;
+}
+
+
+.sidebar-logo a {
+
+    width: 100%;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+}
+
+
+.sidebar-logo img {
+
+    width:
+        205px;
+
+    max-width:
+        100%;
+
+    height:
+        auto;
+
+    max-height:
+        100px;
+
+    object-fit:
+        contain;
+}
+
+
+/* =========================================================
+   SIDEBAR NAV
+========================================================= */
+
+.sidebar-nav {
+
+    width:
+        100%;
+
+    padding:
+        4px 12px 20px;
+}
+
+
+/* =========================================================
+   SECTION TITLE
+========================================================= */
+
+.nav-section-title {
+
+    padding:
+        15px 12px 7px;
+
+    color:
+        #777777;
+
+    font-size:
+        10px;
+
+    font-weight:
+        700;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        1.3px;
+}
+
+
+/* =========================================================
+   SIDEBAR LINK
+========================================================= */
+
+.sidebar-link {
+
+    width:
+        100%;
+
+    min-height:
+        45px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    padding:
+        0 12px;
+
+    margin:
+        3px 0;
+
+    border-radius:
+        8px;
+
+    color:
+        #dddddd;
+
+    font-size:
+        14px;
+
+    font-weight:
+        500;
+
+    position:
+        relative;
+
+    transition:
+        background .2s ease,
+        color .2s ease;
+}
+
+
+/* =========================================================
+   SIDEBAR ICON
+========================================================= */
+
+.sidebar-link i {
+
+    width:
+        25px;
+
+    min-width:
+        25px;
+
+    margin-right:
+        10px;
+
+    text-align:
+        center;
+
+    color:
+        #d0d0d0;
+
+    font-size:
+        16px;
+}
+
+
+/* =========================================================
+   SIDEBAR TEXT
+========================================================= */
+
+.sidebar-link span {
+
+    white-space:
+        nowrap;
+
+    overflow:
+        hidden;
+
+    text-overflow:
+        ellipsis;
+}
+
+
+/* =========================================================
+   SIDEBAR HOVER
+========================================================= */
+
+.sidebar-link:hover {
+
+    background:
+        rgba(255,255,255,.07);
+
+    color:
+        #ffffff;
+}
+
+
+.sidebar-link:hover i {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   ACTIVE LINK
+========================================================= */
+
+.sidebar-link.active {
+
+    background:
+        linear-gradient(
+            135deg,
+            #e5a000,
+            #cc8b00
+        );
+
+    color:
+        #ffffff;
+
+    font-weight:
+        600;
+
+    box-shadow:
+        0 5px 14px
+        rgba(217,149,0,.25);
+}
+
+
+.sidebar-link.active i {
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   SIDEBAR BADGE
+========================================================= */
+
+.sidebar-badge {
+
+    margin-left:
+        auto;
+
+    min-width:
+        26px;
+
+    height:
+        26px;
+
+    padding:
+        0 6px;
+
+    border-radius:
+        50%;
+
+    background:
+        #b17d00;
+
+    color:
+        #ffffff;
+
+    display:
+        flex !important;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-size:
+        11px !important;
+
+    font-weight:
+        700 !important;
+}
+
+
+/* =========================================================
+   ADMIN HEADER
+========================================================= */
+
+.admin-header {
+
+    position:
+        fixed;
+
+    top:
+        0;
+
+    left:
+        var(--sidebar-width);
+
+    right:
+        0;
+
+    height:
+        var(--header-height);
+
+    padding:
+        0 26px;
+
+    background:
+        #ffffff;
+
+    border-bottom:
+        1px solid var(--border);
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    z-index:
+        1500;
+
+    box-shadow:
+        0 1px 7px
+        rgba(0,0,0,.03);
+
+    transition:
+        left .3s ease;
+}
+
+
+/* =========================================================
+   HEADER LEFT
+========================================================= */
+
+.header-left {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    flex-shrink:
+        0;
+
+    min-width:
+        0;
+}
+
+
+/* =========================================================
+   SIDEBAR TOGGLE
+========================================================= */
+
+.sidebar-toggle {
+
+    width:
+        40px;
+
+    height:
+        40px;
+
+    margin-right:
+        12px;
+
+    border:
+        none;
+
+    background:
+        transparent;
+
+    border-radius:
+        8px;
+
+    color:
+        #222222;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-size:
+        21px;
+
+    flex-shrink:
+        0;
+}
+
+
+.sidebar-toggle:hover {
+    background: #f4f4f4;
+}
+
+
+/* =========================================================
+   HEADER TITLE
+========================================================= */
+
+.header-title {
+
+    margin:
+        0;
+
+    color:
+        #171717;
+
+    font-size:
+        26px;
+
+    line-height:
+        1;
+
+    font-weight:
+        700;
+
+    white-space:
+        nowrap;
+}
+
+
+/* =========================================================
+   HEADER SEARCH
+========================================================= */
+
+.header-search {
+
+    position:
+        relative;
+
+    width:
+        300px;
+
+    margin-left:
+        auto;
+
+    margin-right:
+        25px;
+
+    flex-shrink:
+        1;
+}
+
+
+.header-search input {
+
+    width:
+        100%;
+
+    height:
+        42px;
+
+    padding:
+        0 42px 0 15px;
+
+    border:
+        1px solid #dddddd;
+
+    border-radius:
+        8px;
+
+    outline:
+        none;
+
+    background:
+        #ffffff;
+
+    color:
+        #333333;
+
+    font-size:
+        13px;
+}
+
+
+.header-search input::placeholder {
+    color: #999999;
+}
+
+
+.header-search input:focus {
+
+    border-color:
+        var(--gold);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(217,149,0,.08);
+}
+
+
+.header-search i {
+
+    position:
+        absolute;
+
+    top:
+        50%;
+
+    right:
+        14px;
+
+    transform:
+        translateY(-50%);
+
+    color:
+        #777777;
+
+    font-size:
+        17px;
+
+    pointer-events:
+        none;
+}
+
+
+/* =========================================================
+   HEADER RIGHT
+========================================================= */
+
+.header-right {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        20px;
+
+    flex-shrink:
+        0;
+}
+
+
+/* =========================================================
+   HEADER DATE + LIVE TIME
+========================================================= */
+
+.header-date {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        9px;
+
+    min-width:
+        185px;
+}
+
+
+.header-date > i {
+
+    color:
+        #222222;
+
+    font-size:
+        19px;
+}
+
+
+.header-date > div {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    line-height:
+        1.25;
+}
+
+
+.header-date strong {
+
+    color:
+        #222222;
+
+    font-size:
+        14px;
+
+    font-weight:
+        700;
+
+    white-space:
+        nowrap;
+}
+
+
+.header-date span {
+
+    color:
+        #888888;
+
+    font-size:
+        11px;
+
+    white-space:
+        nowrap;
+
+    transition:
+        opacity .15s ease;
+}
+
+
+/* =========================================================
+   NOTIFICATION
+========================================================= */
+
+.notification-btn {
+
+    position:
+        relative;
+
+    width:
+        38px;
+
+    height:
+        38px;
+
+    border:
+        none;
+
+    background:
+        transparent;
+
+    border-radius:
+        50%;
+
+    color:
+        #222222;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-size:
+        19px;
+}
+
+
+.notification-btn:hover {
+    background: #f4f4f4;
+}
+
+
+.notification-count {
+
+    position:
+        absolute;
+
+    top:
+        -1px;
+
+    right:
+        -1px;
+
+    min-width:
+        16px;
+
+    height:
+        16px;
+
+    padding:
+        0 4px;
+
+    border-radius:
+        50%;
+
+    background:
+        var(--gold);
+
+    border:
+        2px solid #ffffff;
+
+    color:
+        #ffffff;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-size:
+        8px;
+
+    font-weight:
+        700;
+}
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+.admin-profile {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        8px;
+
+    cursor:
+        pointer;
+
+    height:
+        50px;
+
+    flex-shrink:
+        0;
+}
+
+
+.profile-avatar {
+
+    width:
+        40px;
+
+    height:
+        40px;
+
+    border-radius:
+        50%;
+
+    background:
+        #f0f0f0;
+
+    color:
+        #222222;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    font-size:
+        17px;
+}
+
+
+.profile-info {
+
+    display:
+        flex;
+
+    flex-direction:
+        column;
+
+    line-height:
+        1.2;
+}
+
+
+.profile-info strong {
+
+    color:
+        #222222;
+
+    font-size:
+        13px;
+
+    font-weight:
+        700;
+}
+
+
+.profile-info span {
+
+    color:
+        #888888;
+
+    font-size:
+        10px;
+}
+
+
+.admin-profile > i {
+
+    margin-left:
+        3px;
+
+    color:
+        #777777;
+
+    font-size:
+        10px;
+}
+
+
+/* =========================================================
+   PROFILE DROPDOWN
+========================================================= */
+
+.profile-dropdown {
+
+    position:
+        fixed;
+
+    top:
+        70px;
+
+    right:
+        20px;
+
+    width:
+        205px;
+
+    padding:
+        7px;
+
+    background:
+        #ffffff;
+
+    border:
+        1px solid #e3e3e3;
+
+    border-radius:
+        9px;
+
+    box-shadow:
+        0 12px 30px
+        rgba(0,0,0,.13);
+
+    display:
+        none;
+
+    z-index:
+        3000;
+}
+
+
+.profile-dropdown.show {
+    display: block;
+}
+
+
+.profile-dropdown a {
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    gap:
+        9px;
+
+    padding:
+        10px 11px;
+
+    border-radius:
+        7px;
+
+    color:
+        #444444;
+
+    font-size:
+        13px;
+}
+
+
+.profile-dropdown a:hover {
+
+    background:
+        #fff8e8;
+
+    color:
+        var(--gold-dark);
+}
+
+
+.profile-dropdown a i {
+
+    width:
+        17px;
+
+    text-align:
+        center;
+}
+
+
+.dropdown-divider {
+
+    height:
+        1px;
+
+    margin:
+        5px 0;
+
+    background:
+        #eeeeee;
+}
+
+
+.logout-dropdown {
+    color: #d93636 !important;
+}
+
+
+.logout-dropdown:hover {
+
+    background:
+        #fff0f0 !important;
+
+    color:
+        #c52d2d !important;
+}
+
+
+/* =========================================================
+   MAIN CONTENT
+========================================================= */
+
+.main-content {
+
+    position:
+        relative;
+
+    margin-left:
+        var(--sidebar-width);
+
+    padding-top:
+        var(--header-height);
+
+    width:
+        calc(100% - var(--sidebar-width));
+
+    min-height:
+        100vh;
+
+    background:
+        var(--body-bg);
+
+    transition:
+        margin-left .3s ease,
+        width .3s ease;
+}
+
+
+/* =========================================================
+   COMMON PAGE CONTAINERS
+========================================================= */
+
+.page-container,
+.dashboard-container,
+.category-page,
+.report-page,
+.billing-page {
+
+    width:
+        100%;
+
+    max-width:
+        none;
+
+    margin:
+        0;
+
+    padding:
+        26px 28px 35px;
+}
+
+
+/* =========================================================
+   CHILD WIDTH
+========================================================= */
+
+.main-content > * {
+    max-width: 100%;
+}
+
+
+.main-content img {
+    max-width: 100%;
+}
+
+
+.main-content table {
+    max-width: 100%;
+}
+
+
+/* =========================================================
+   COMMON CARDS
+========================================================= */
+
+.dashboard-card,
+.category-card,
+.category-form-card,
+.report-card,
+.billing-card {
+
+    background:
+        #ffffff;
+
+    border:
+        1px solid #e7e7e7;
+
+    border-radius:
+        10px;
+
+    box-shadow:
+        0 2px 8px
+        rgba(0,0,0,.03);
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+.admin-footer {
+
+    margin-left:
+        var(--sidebar-width);
+
+    padding:
+        16px 28px;
+
+    min-height:
+        55px;
+
+    display:
+        flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        space-between;
+
+    background:
+        #ffffff;
+
+    border-top:
+        1px solid #e7e7e7;
+
+    color:
+        #888888;
+
+    font-size:
+        11px;
+
+    transition:
+        margin-left .3s ease;
+}
+
+
+.admin-footer strong {
+    color:
+        var(--gold-dark);
+}
+
+
+/* =========================================================
+   SIDEBAR OVERLAY
+========================================================= */
+
+.sidebar-overlay {
+
+    position:
+        fixed;
+
+    inset:
+        0;
+
+    background:
+        rgba(0,0,0,.45);
+
+    z-index:
+        1900;
+
+    display:
+        none;
+}
+
+
+.sidebar-overlay.show {
+    display:
+        block;
+}
+
+
+/* =========================================================
+   FORM ELEMENTS
+========================================================= */
+
+input,
+select,
+textarea {
+    outline:
+        none;
+}
+
+
+input:focus,
+select:focus,
+textarea:focus {
+
+    border-color:
+        var(--gold) !important;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(217,149,0,.08);
+}
+
+
+/* =========================================================
+   1200px
+========================================================= */
+
+@media (max-width: 1200px) {
+
+    :root {
+        --sidebar-width: 225px;
+    }
+
+
+    .sidebar-logo img {
+        width: 190px;
+    }
+
+
+    .sidebar-link {
+        font-size: 13px;
+    }
+
+
+    .header-search {
+
+        width:
+            240px;
+
+        margin-right:
+            18px;
+    }
+
+
+    .header-date {
+        min-width: 170px;
+    }
+
+
+    .header-right {
+        gap:
+            14px;
+    }
+
+
+    .admin-header {
+        padding:
+            0 20px;
+    }
+
+
+    .page-container,
+    .dashboard-container,
+    .category-page,
+    .report-page,
+    .billing-page {
+
+        padding:
+            24px 22px 30px;
+    }
+}
+
+
+/* =========================================================
+   1000px
+========================================================= */
+
+@media (max-width: 1000px) {
+
+    :root {
+        --sidebar-width: 220px;
+    }
+
+
+    .header-search {
+        width:
+            190px;
+    }
+
+
+    .profile-info {
+        display:
+            none;
+    }
+
+
+    .admin-profile > i {
+        display:
+            none;
+    }
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 900px) {
+
+    :root {
+        --sidebar-width: 240px;
+    }
+
+
+    .admin-sidebar {
+
+        transform:
+            translateX(-100%);
+    }
+
+
+    .admin-sidebar.open {
+
+        transform:
+            translateX(0);
+    }
+
+
+    .admin-header {
+
+        left:
+            0;
+
+        padding:
+            0 18px;
+    }
+
+
+    .main-content {
+
+        margin-left:
+            0;
+
+        width:
+            100%;
+    }
+
+
+    .admin-footer {
+
+        margin-left:
+            0;
+    }
+
+
+    .header-search {
+
+        display:
+            none;
+    }
+
+
+    .header-right {
+
+        margin-left:
+            auto;
+    }
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 650px) {
+
+    :root {
+        --header-height: 70px;
+    }
+
+
+    .admin-header {
+
+        height:
+            70px;
+
+        padding:
+            0 14px;
+    }
+
+
+    .header-title {
+
+        font-size:
+            21px;
+    }
+
+
+    .sidebar-toggle {
+
+        width:
+            38px;
+
+        height:
+            38px;
+
+        margin-right:
+            8px;
+    }
+
+
+    .header-date {
+
+        display:
+            none;
+    }
+
+
+    .profile-info {
+
+        display:
+            none;
+    }
+
+
+    .admin-profile > i {
+
+        display:
+            none;
+    }
+
+
+    .dashboard-container,
+    .page-container,
+    .category-page,
+    .report-page,
+    .billing-page {
+
+        padding:
+            18px 14px 25px;
+    }
+
+
+    .admin-footer {
+
+        padding:
+            14px;
+
+        flex-direction:
+            column;
+
+        gap:
+            5px;
+
+        text-align:
+            center;
+    }
+}
+
+
+/* =========================================================
+   VERY SMALL
+========================================================= */
+
+@media (max-width: 420px) {
+
+    .header-title {
+        font-size:
+            19px;
+    }
+
+
+    .header-right {
+        gap:
+            5px;
+    }
+
+
+    .notification-btn {
+
+        width:
+            34px;
+
+        height:
+            34px;
+    }
+
+
+    .profile-avatar {
+
+        width:
+            36px;
+
+        height:
+            36px;
+    }
+}

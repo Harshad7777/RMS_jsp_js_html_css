@@ -1,0 +1,1867 @@
+/* =========================================================
+   SANKALP RMS
+   STAFF + CHEF MANAGEMENT
+   COMPLETE FINAL CSS
+========================================================= */
+
+
+/* =========================================================
+   PAGE
+========================================================= */
+
+.staff-page {
+
+    width: 100%;
+
+    min-height: calc(100vh - 80px);
+
+    padding: 20px 28px 40px;
+
+    box-sizing: border-box;
+
+    background: #f7f7f8;
+}
+
+
+/* =========================================================
+   PAGE HEADER
+========================================================= */
+
+.staff-page-header {
+
+    width: 100%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 20px;
+
+    margin-bottom: 22px;
+}
+
+
+.staff-page-header h2 {
+
+    margin: 0;
+
+    color: #202020;
+
+    font-size: 26px;
+
+    line-height: 1.2;
+
+    font-weight: 700;
+}
+
+
+.staff-page-header h2 i {
+
+    margin-right: 8px;
+
+    color: #e6a000;
+}
+
+
+.staff-page-header p {
+
+    margin: 7px 0 0;
+
+    color: #777;
+
+    font-size: 13px;
+}
+
+
+/* =========================================================
+   ADD STAFF / CHEF BUTTON
+========================================================= */
+
+.staff-page-header .btn-primary {
+
+    min-height: 42px;
+
+    padding: 10px 18px;
+
+    border: none;
+
+    border-radius: 8px;
+
+    background: #e9a000;
+
+    color: #fff;
+
+    font-size: 13px;
+
+    font-weight: 700;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 4px 12px
+        rgba(233,160,0,.18);
+
+    transition:
+        all .2s ease;
+}
+
+
+.staff-page-header .btn-primary:hover {
+
+    background: #d79200;
+
+    color: #fff;
+
+    transform: translateY(-1px);
+
+    box-shadow:
+        0 7px 16px
+        rgba(233,160,0,.24);
+}
+
+
+.staff-page-header .btn-primary:active {
+
+    transform: translateY(0);
+}
+
+
+.staff-page-header .btn-primary i {
+
+    margin-right: 6px;
+}
+
+
+/* =========================================================
+   STATISTICS ROW
+========================================================= */
+
+.staff-stat-row {
+
+    width: 100%;
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-bottom: 22px;
+}
+
+
+.staff-stat-row > div {
+
+    width: 100%;
+
+    min-width: 0;
+}
+
+
+/* =========================================================
+   STAT CARD
+========================================================= */
+
+.staff-stat-card {
+
+    width: 100%;
+
+    min-height: 120px;
+
+    padding: 20px;
+
+    box-sizing: border-box;
+
+    background: #fff;
+
+    border:
+        1px solid #e7e7e7;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 16px;
+
+    box-shadow:
+        0 3px 12px
+        rgba(0,0,0,.035);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.staff-stat-card:hover {
+
+    transform:
+        translateY(-2px);
+
+    box-shadow:
+        0 8px 20px
+        rgba(0,0,0,.06);
+}
+
+
+/* =========================================================
+   STAT ICON
+========================================================= */
+
+.staff-stat-icon {
+
+    width: 56px;
+
+    height: 56px;
+
+    min-width: 56px;
+
+    border-radius: 12px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 22px;
+}
+
+
+/* TOTAL */
+
+.staff-stat-card.total .staff-stat-icon {
+
+    background: #fff0d4;
+
+    color: #df9900;
+}
+
+
+/* ACTIVE */
+
+.staff-stat-card.active .staff-stat-icon {
+
+    background: #e5f7ea;
+
+    color: #239347;
+}
+
+
+/* INACTIVE */
+
+.staff-stat-card.inactive .staff-stat-icon {
+
+    background: #ffe8e8;
+
+    color: #d74747;
+}
+
+
+/* =========================================================
+   STAT TEXT
+========================================================= */
+
+.staff-stat-card span {
+
+    display: block;
+
+    color: #777;
+
+    font-size: 12px;
+
+    font-weight: 500;
+}
+
+
+.staff-stat-card strong {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color: #202020;
+
+    font-size: 25px;
+
+    line-height: 1;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   STAFF LIST CARD
+========================================================= */
+
+.staff-list-card {
+
+    width: 100%;
+
+    background: #fff;
+
+    border:
+        1px solid #e7e7e7 !important;
+
+    border-radius: 12px !important;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 3px 12px
+        rgba(0,0,0,.035) !important;
+}
+
+
+/* =========================================================
+   LIST HEADER
+========================================================= */
+
+.staff-list-card .card-header {
+
+    min-height: 58px;
+
+    padding: 14px 18px;
+
+    background: #242424;
+
+    border: none;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+
+    box-sizing: border-box;
+}
+
+
+.staff-list-card .card-header h5 {
+
+    margin: 0;
+
+    color: #fff;
+
+    font-size: 15px;
+
+    font-weight: 700;
+}
+
+
+.staff-list-card .card-header h5 i {
+
+    margin-right: 7px;
+}
+
+
+/* =========================================================
+   TEAM COUNT
+========================================================= */
+
+#staffCount {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 80px;
+
+    min-height: 28px;
+
+    padding: 4px 11px;
+
+    box-sizing: border-box;
+
+    border-radius: 20px;
+
+    background: #e9a000 !important;
+
+    color: #fff !important;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   CARD BODY
+========================================================= */
+
+.staff-list-card .card-body {
+
+    padding: 18px;
+}
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+.staff-search-box {
+
+    position: relative;
+
+    width: 100%;
+
+    max-width: 450px;
+
+    margin-bottom: 16px;
+}
+
+
+.staff-search-box i {
+
+    position: absolute;
+
+    left: 13px;
+
+    top: 50%;
+
+    z-index: 2;
+
+    transform:
+        translateY(-50%);
+
+    color: #888;
+
+    font-size: 13px;
+
+    pointer-events: none;
+}
+
+
+.staff-search-box input {
+
+    width: 100%;
+
+    min-height: 41px;
+
+    padding:
+        9px 12px 9px 38px !important;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid #ddd;
+
+    border-radius: 8px;
+
+    background: #fff;
+
+    color: #333;
+
+    outline: none;
+
+    font-size: 12px;
+
+    box-shadow: none !important;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.staff-search-box input::placeholder {
+
+    color: #aaa;
+}
+
+
+.staff-search-box input:focus {
+
+    border-color:
+        #e5a000;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(229,160,0,.08) !important;
+}
+
+
+/* =========================================================
+   TABLE WRAPPER
+========================================================= */
+
+.staff-list-card .table-responsive {
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    border:
+        1px solid #ededed;
+
+    border-radius: 8px;
+
+    background: #fff;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.staff-table {
+
+    width: 100%;
+
+    min-width: 950px;
+
+    border-collapse: collapse;
+
+    background: #fff;
+
+    font-size: 12px;
+}
+
+
+/* =========================================================
+   TABLE HEADER
+========================================================= */
+
+.staff-table thead th {
+
+    padding: 13px 12px;
+
+    background: #fafafa;
+
+    color: #444;
+
+    border-bottom:
+        1px solid #e7e7e7;
+
+    font-size: 11px;
+
+    font-weight: 700;
+
+    text-align: left;
+
+    white-space: nowrap;
+}
+
+
+.staff-table thead th:first-child {
+
+    text-align: center;
+}
+
+
+/* =========================================================
+   TABLE BODY
+========================================================= */
+
+.staff-table tbody td {
+
+    padding: 12px;
+
+    color: #333;
+
+    border-bottom:
+        1px solid #eeeeee;
+
+    vertical-align: middle;
+
+    white-space: nowrap;
+}
+
+
+.staff-table tbody tr {
+
+    transition:
+        background .15s ease;
+}
+
+
+.staff-table tbody tr:hover {
+
+    background:
+        #fffaf0;
+}
+
+
+.staff-table tbody tr:last-child td {
+
+    border-bottom: none;
+}
+
+
+/* =========================================================
+   STAFF PERSON
+========================================================= */
+
+.staff-person {
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+}
+
+
+.staff-person strong {
+
+    color: #222;
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+/* =========================================================
+   AVATAR
+========================================================= */
+
+.staff-avatar {
+
+    width: 35px;
+
+    height: 35px;
+
+    min-width: 35px;
+
+    border-radius: 50%;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 13px;
+}
+
+
+/* STAFF */
+
+.staff-avatar.staff {
+
+    background:
+        #fff0d4;
+
+    color:
+        #df9900;
+}
+
+
+/* CHEF */
+
+.staff-avatar.chef {
+
+    background:
+        #eee4ff;
+
+    color:
+        #7a42c2;
+}
+
+
+/* =========================================================
+   ROLE BADGE
+========================================================= */
+
+.staff-role {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 60px;
+
+    padding: 5px 9px;
+
+    border-radius: 5px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+}
+
+
+/* STAFF */
+
+.staff-role.staff {
+
+    background:
+        #e9a000;
+
+    color:
+        #fff;
+}
+
+
+/* CHEF */
+
+.staff-role.chef {
+
+    background:
+        #7b45c5;
+
+    color:
+        #fff;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.staff-status {
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    min-width: 67px;
+
+    padding: 5px 10px;
+
+    border-radius: 20px;
+
+    font-size: 10px;
+
+    font-weight: 700;
+
+    line-height: 1.2;
+}
+
+
+/* ACTIVE */
+
+.staff-status.active {
+
+    background:
+        #e5f7ea;
+
+    color:
+        #218842;
+}
+
+
+/* INACTIVE */
+
+.staff-status.inactive {
+
+    background:
+        #f0f0f0;
+
+    color:
+        #666;
+}
+
+
+/* =========================================================
+   ACTION BUTTONS
+========================================================= */
+
+.staff-action {
+
+    width: 32px;
+
+    height: 32px;
+
+    margin-right: 4px;
+
+    padding: 0;
+
+    border-radius: 6px;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    cursor: pointer;
+
+    font-size: 12px;
+
+    transition:
+        all .2s ease;
+
+    box-sizing: border-box;
+}
+
+
+.staff-action:last-child {
+
+    margin-right: 0;
+}
+
+
+.staff-action:focus {
+
+    outline: none;
+}
+
+
+/* =========================================================
+   EDIT
+========================================================= */
+
+.staff-action.edit {
+
+    background:
+        #fff1d3;
+
+    color:
+        #d89200;
+
+    border:
+        1px solid #f1d59d;
+}
+
+
+.staff-action.edit:hover {
+
+    background:
+        #e9a000;
+
+    color:
+        #fff;
+
+    border-color:
+        #e9a000;
+}
+
+
+/* =========================================================
+   PASSWORD
+========================================================= */
+
+.staff-action.password {
+
+    background:
+        #eeeeee;
+
+    color:
+        #444;
+
+    border:
+        1px solid #ddd;
+}
+
+
+.staff-action.password:hover {
+
+    background:
+        #333;
+
+    color:
+        #fff;
+
+    border-color:
+        #333;
+}
+
+
+/* =========================================================
+   DEACTIVATE
+========================================================= */
+
+.staff-action.btn-danger {
+
+    background:
+        #ffe8e8;
+
+    color:
+        #ce4141;
+
+    border:
+        1px solid #f0c2c2;
+}
+
+
+.staff-action.btn-danger:hover {
+
+    background:
+        #d74444;
+
+    color:
+        #fff;
+
+    border-color:
+        #d74444;
+}
+
+
+/* =========================================================
+   ACTIVATE
+========================================================= */
+
+.staff-action.btn-success {
+
+    background:
+        #e5f7ea;
+
+    color:
+        #218842;
+
+    border:
+        1px solid #c9e9d1;
+}
+
+
+.staff-action.btn-success:hover {
+
+    background:
+        #2d9b50;
+
+    color:
+        #fff;
+
+    border-color:
+        #2d9b50;
+}
+
+
+/* =========================================================
+   LOADING CELL
+========================================================= */
+
+.loading-cell {
+
+    height: 130px;
+
+    padding: 30px !important;
+
+    text-align: center;
+
+    color: #777;
+
+    font-size: 12px;
+}
+
+
+.loading-cell i {
+
+    display: block;
+
+    margin-bottom: 9px;
+
+    color: #e5a000;
+
+    font-size: 22px;
+}
+
+
+/* =========================================================
+   EMPTY CELL
+========================================================= */
+
+.empty-cell {
+
+    height: 130px;
+
+    padding: 30px !important;
+
+    text-align: center;
+
+    color: #888;
+
+    font-size: 12px;
+}
+
+
+.empty-cell i {
+
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: #bbb;
+
+    font-size: 24px;
+}
+
+
+/* =========================================================
+   ERROR CELL
+========================================================= */
+
+.error-cell {
+
+    height: 150px;
+
+    padding: 30px !important;
+
+    text-align: center;
+
+    color: #d74444;
+
+    font-size: 12px;
+}
+
+
+.error-cell i {
+
+    display: block;
+
+    margin-bottom: 10px;
+
+    font-size: 25px;
+}
+
+
+.error-cell strong {
+
+    display: block;
+
+    margin-bottom: 5px;
+
+    font-size: 13px;
+}
+
+
+.error-cell small {
+
+    display: block;
+
+    color: #777;
+
+    font-size: 11px;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   CUSTOM STAFF MODAL
+   DOES NOT DEPEND ON BOOTSTRAP JS
+========================================================= */
+
+#staffModal,
+#staffPasswordModal {
+
+    position: fixed !important;
+
+    top: 0 !important;
+
+    left: 0 !important;
+
+    width: 100% !important;
+
+    height: 100% !important;
+
+    display: none;
+
+    overflow-x: hidden;
+
+    overflow-y: auto;
+
+    background: transparent;
+
+    z-index: 200000 !important;
+
+    padding: 0 !important;
+}
+
+
+/* =========================================================
+   SHOW MODAL
+========================================================= */
+
+#staffModal.show,
+#staffPasswordModal.show {
+
+    display: block !important;
+}
+
+
+/* =========================================================
+   MODAL DIALOG
+========================================================= */
+
+#staffModal .modal-dialog,
+#staffPasswordModal .modal-dialog {
+
+    position: relative;
+
+    width: auto;
+
+    pointer-events: none;
+
+    margin:
+        1.75rem auto;
+
+    z-index: 200002 !important;
+}
+
+
+#staffModal .modal-dialog {
+
+    max-width: 800px;
+}
+
+
+#staffPasswordModal .modal-dialog {
+
+    max-width: 500px;
+}
+
+
+/* =========================================================
+   MODAL CONTENT
+========================================================= */
+
+#staffModal .modal-content,
+#staffPasswordModal .modal-content {
+
+    position: relative;
+
+    width: 100%;
+
+    pointer-events: auto;
+
+    background: #fff;
+
+    border: none;
+
+    border-radius: 14px;
+
+    overflow: hidden;
+
+    box-shadow:
+        0 25px 70px
+        rgba(0,0,0,.30);
+}
+
+
+/* =========================================================
+   MODAL HEADER
+========================================================= */
+
+#staffModal .modal-header,
+#staffPasswordModal .modal-header {
+
+    min-height: 60px;
+
+    padding:
+        16px 20px;
+
+    background:
+        #e9a000;
+
+    color:
+        #fff;
+
+    border: none;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+}
+
+
+/* =========================================================
+   MODAL TITLE
+========================================================= */
+
+#staffModal .modal-title,
+#staffPasswordModal .modal-title {
+
+    margin: 0;
+
+    color:
+        #fff;
+
+    font-size:
+        17px;
+
+    font-weight:
+        700;
+
+    line-height:
+        1.2;
+}
+
+
+/* =========================================================
+   MODAL SUBTITLE
+========================================================= */
+
+#staffModal .modal-header small {
+
+    display: block;
+
+    margin-top: 3px;
+
+    color:
+        #fff;
+
+    opacity:
+        .9;
+
+    font-size:
+        11px;
+}
+
+
+/* =========================================================
+   CLOSE BUTTON
+========================================================= */
+
+#staffModal .btn-close,
+#staffPasswordModal .btn-close {
+
+    width: 32px;
+
+    height: 32px;
+
+    padding: 0;
+
+    margin: 0;
+
+    opacity: 1;
+
+    background-size: 12px;
+
+    border-radius: 6px;
+
+    transition:
+        background-color .2s ease;
+}
+
+
+#staffModal .btn-close:hover,
+#staffPasswordModal .btn-close:hover {
+
+    background-color:
+        rgba(255,255,255,.15);
+}
+
+
+/* =========================================================
+   PASSWORD ICON
+========================================================= */
+
+#staffPasswordModal .modal-title i {
+
+    margin-right:
+        7px;
+}
+
+
+/* =========================================================
+   MODAL BODY
+========================================================= */
+
+#staffModal .modal-body,
+#staffPasswordModal .modal-body {
+
+    padding:
+        22px;
+
+    background:
+        #fff;
+}
+
+
+/* =========================================================
+   FORM LABEL
+========================================================= */
+
+#staffModal .form-label,
+#staffPasswordModal .form-label {
+
+    display: block;
+
+    margin-bottom:
+        6px;
+
+    color:
+        #333;
+
+    font-size:
+        11px;
+
+    font-weight:
+        700;
+}
+
+
+#staffModal .form-label span,
+#staffPasswordModal .form-label span {
+
+    color:
+        #dc4141;
+}
+
+
+/* =========================================================
+   FORM CONTROL
+========================================================= */
+
+#staffModal .form-control,
+#staffModal .form-select,
+#staffPasswordModal .form-control {
+
+    width: 100%;
+
+    min-height: 40px;
+
+    padding:
+        9px 11px;
+
+    box-sizing: border-box;
+
+    border:
+        1px solid #ddd;
+
+    border-radius:
+        7px;
+
+    background:
+        #fff;
+
+    color:
+        #333;
+
+    outline:
+        none;
+
+    font-size:
+        12px;
+
+    box-shadow:
+        none !important;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+
+#staffModal .form-control::placeholder,
+#staffPasswordModal .form-control::placeholder {
+
+    color:
+        #aaa;
+}
+
+
+#staffModal .form-control:focus,
+#staffModal .form-select:focus,
+#staffPasswordModal .form-control:focus {
+
+    border-color:
+        #e5a000;
+
+    box-shadow:
+        0 0 0 2px
+        rgba(229,160,0,.08) !important;
+}
+
+
+/* =========================================================
+   FORM HELP
+========================================================= */
+
+.form-help {
+
+    display: block;
+
+    margin-top: 5px;
+
+    color:
+        #999;
+
+    font-size:
+        10px;
+}
+
+
+/* =========================================================
+   ROLE INFO
+========================================================= */
+
+.staff-role-info {
+
+    margin-top:
+        4px;
+
+    padding:
+        11px 13px;
+
+    border:
+        1px solid #d9e8f3;
+
+    border-radius:
+        8px;
+
+    background:
+        #f4f9fc;
+
+    color:
+        #4c6b7b;
+
+    font-size:
+        11px;
+
+    line-height:
+        1.5;
+}
+
+
+.staff-role-info i {
+
+    margin-right:
+        5px;
+
+    color:
+        #3f7ea4;
+}
+
+
+.staff-role-info strong {
+
+    color:
+        #333;
+}
+
+
+/* =========================================================
+   MODAL FOOTER
+========================================================= */
+
+#staffModal .modal-footer,
+#staffPasswordModal .modal-footer {
+
+    padding:
+        14px 20px;
+
+    background:
+        #fafafa;
+
+    border-top:
+        1px solid #eeeeee;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: flex-end;
+
+    gap: 8px;
+}
+
+
+/* =========================================================
+   MODAL BUTTONS
+========================================================= */
+
+#staffModal .modal-footer .btn,
+#staffPasswordModal .modal-footer .btn {
+
+    min-height:
+        40px;
+
+    padding:
+        9px 17px;
+
+    border-radius:
+        7px;
+
+    font-size:
+        12px;
+
+    font-weight:
+        700;
+
+    cursor:
+        pointer;
+}
+
+
+/* =========================================================
+   SAVE BUTTON
+========================================================= */
+
+.btn-save {
+
+    border:
+        none !important;
+
+    background:
+        #e9a000 !important;
+
+    color:
+        #fff !important;
+}
+
+
+.btn-save:hover {
+
+    background:
+        #d79200 !important;
+
+    color:
+        #fff !important;
+}
+
+
+.btn-save:disabled {
+
+    opacity:
+        .7;
+
+    cursor:
+        not-allowed;
+
+    transform:
+        none;
+}
+
+
+/* =========================================================
+   SECONDARY BUTTON
+========================================================= */
+
+#staffModal .btn-secondary,
+#staffPasswordModal .btn-secondary {
+
+    border:
+        1px solid #ddd;
+
+    background:
+        #eeeeee;
+
+    color:
+        #444;
+}
+
+
+#staffModal .btn-secondary:hover,
+#staffPasswordModal .btn-secondary:hover {
+
+    background:
+        #e2e2e2;
+
+    color:
+        #333;
+}
+
+
+/* =========================================================
+   CUSTOM BACKDROP
+   CREATED BY staff.js
+========================================================= */
+
+.staff-custom-backdrop {
+
+    position:
+        fixed;
+
+    top:
+        0;
+
+    left:
+        0;
+
+    width:
+        100%;
+
+    height:
+        100%;
+
+    background:
+        rgba(0,0,0,.55);
+
+    z-index:
+        199999 !important;
+}
+
+
+/* =========================================================
+   BODY WHEN MODAL OPEN
+========================================================= */
+
+body.modal-open {
+
+    overflow:
+        hidden !important;
+}
+
+
+/* =========================================================
+   DISABLE TEXT SELECTION ON ACTION ICON BUTTONS
+========================================================= */
+
+.staff-action,
+.staff-page-header .btn-primary,
+.btn-save {
+
+    user-select:
+        none;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .staff-page {
+
+        padding-left:
+            20px;
+
+        padding-right:
+            20px;
+    }
+
+}
+
+
+@media (max-width: 900px) {
+
+    .staff-stat-row {
+
+        grid-template-columns:
+            repeat(
+                2,
+                minmax(0,1fr)
+            );
+    }
+
+}
+
+
+@media (max-width: 768px) {
+
+    .staff-page {
+
+        padding:
+            18px 15px 30px;
+    }
+
+
+    .staff-page-header {
+
+        flex-direction:
+            column;
+
+        align-items:
+            flex-start;
+    }
+
+
+    .staff-page-header .btn-primary {
+
+        width:
+            100%;
+    }
+
+
+    .staff-stat-row {
+
+        grid-template-columns:
+            1fr;
+    }
+
+
+    .staff-stat-card {
+
+        min-height:
+            105px;
+    }
+
+
+    .staff-list-card .card-header {
+
+        align-items:
+            flex-start;
+
+        flex-direction:
+            column;
+    }
+
+
+    .staff-search-box {
+
+        max-width:
+            100%;
+    }
+
+
+    #staffModal .modal-dialog,
+    #staffPasswordModal .modal-dialog {
+
+        margin:
+            1rem auto;
+    }
+
+}
+
+
+@media (max-width: 576px) {
+
+    .staff-page {
+
+        padding:
+            15px 10px 25px;
+    }
+
+
+    .staff-page-header h2 {
+
+        font-size:
+            22px;
+    }
+
+
+    .staff-page-header p {
+
+        font-size:
+            12px;
+    }
+
+
+    .staff-stat-card {
+
+        padding:
+            16px;
+    }
+
+
+    .staff-stat-icon {
+
+        width:
+            50px;
+
+        height:
+            50px;
+
+        min-width:
+            50px;
+
+        font-size:
+            19px;
+    }
+
+
+    .staff-stat-card strong {
+
+        font-size:
+            22px;
+    }
+
+
+    .staff-list-card .card-body {
+
+        padding:
+            12px;
+    }
+
+
+    #staffModal .modal-body,
+    #staffPasswordModal .modal-body {
+
+        padding:
+            17px;
+    }
+
+
+    #staffModal .modal-footer,
+    #staffPasswordModal .modal-footer {
+
+        flex-direction:
+            column;
+
+        align-items:
+            stretch;
+    }
+
+
+    #staffModal .modal-footer .btn,
+    #staffPasswordModal .modal-footer .btn {
+
+        width:
+            100%;
+    }
+
+
+    #staffModal .modal-dialog,
+    #staffPasswordModal .modal-dialog {
+
+        max-width:
+            calc(100% - 20px);
+
+        margin:
+            10px auto;
+    }
+
+
+    .staff-table {
+
+        min-width:
+            900px;
+    }
+
+}
+
+
+/* =========================================================
+   VERY SMALL SCREENS
+========================================================= */
+
+@media (max-width: 400px) {
+
+    .staff-page {
+
+        padding:
+            12px 8px 20px;
+    }
+
+
+    .staff-page-header h2 {
+
+        font-size:
+            20px;
+    }
+
+
+    .staff-stat-card {
+
+        gap:
+            12px;
+    }
+
+
+    .staff-stat-icon {
+
+        width:
+            46px;
+
+        height:
+            46px;
+
+        min-width:
+            46px;
+    }
+
+}
